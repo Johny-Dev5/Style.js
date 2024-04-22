@@ -1,4 +1,4 @@
-  <script>
+
     const products = [
       {
         id: 1,
@@ -152,4 +152,3 @@
         });
       });
     });
-  </script>
