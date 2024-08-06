@@ -1,0 +1,15 @@
+[
+  {
+    "id": 3,
+    "name": "Simple Notebook",
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRITp2gr4Wnhf_7DOVUPzOGXAXRE_GpJMReZw&s"
+    ],
+    "price": 10.99,
+    "compare": 15,
+    "stock": 50,
+    "preOrder": true,
+    "category": "Stationery",
+    "description": "<p><strong>Features:</strong><br>100 pages of lined paper<br>Hardcover<br>Dimensions: 6 x 9 inches</p>"
+  }
+]
