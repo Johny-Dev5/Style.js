@@ -318,7 +318,7 @@ function displayProducts() {
                 <button data-id="${product.id}" class="edit-product">Edit</button>
                 <button data-id="${product.id}" class="delete-product">Delete</button>
             </td> <!-- Actions Column -->
-            ${colorDetailsHtml}
+       
         `;
         productList.appendChild(productRow);
     });
@@ -394,7 +394,6 @@ function showProductDetails(productId) {
     }
 }
 
-// Close modal functionality
 document.getElementById('close-modal').addEventListener('click', () => {
     document.getElementById('product-modal').style.display = 'none';
 });
@@ -424,12 +423,6 @@ function stripHTMLTags(input) {
                     const hasColors = product.colors.length > 0;
                     document.getElementById('has-colors').checked = hasColors;
                     document.getElementById('product-price').value = hasColors ? '' : product.price || '';
-                    
-                    // document.getElementById('product-price').value = product.price;
-                    // document.getElementById('product-compare').value = product.compare || '';
-                    // document.getElementById('product-discount').value = product.discount || '';
-                    // document.getElementById('product-preorder').checked = product.preOrder;
-                    
                     document.getElementById('product-compare').value = hasColors ? '' : product.compare || '';
                     document.getElementById('product-discount').value = hasColors ? '' : product.discount || '';
                     document.getElementById('product-preorder').checked = hasColors ? false : product.preOrder || false;
@@ -457,7 +450,6 @@ productForm.addEventListener('submit', (event) => {
     
     floatingFormOverlay.style.display = 'none';
 });
-
             function deleteProduct(productId) {
                 let products = JSON.parse(localStorage.getItem('products') || '[]');
                 products = products.filter(p => p.id !== productId);
@@ -475,20 +467,20 @@ productForm.addEventListener('submit', (event) => {
 const price = document.getElementById('product-price').value.trim() ? parseFloat(document.getElementById('product-price').value) : undefined;
         const compare = document.getElementById('product-compare').value.trim() ? parseFloat(document.getElementById('product-compare').value) : undefined;
         const discount = document.getElementById('product-discount').value.trim() ? parseFloat(document.getElementById('product-discount').value) : undefined;
-    const preOrder = document.getElementById('product-preorder').checked ? true : undefined; // Only include if checked
-    const tag = document.getElementById('product-tag').value || undefined; // Only include if provided
-    const customText = document.getElementById('product-custom-text').value || undefined; // Only include if provided
+    const preOrder = document.getElementById('product-preorder').checked ? true : undefined; 
+    const tag = document.getElementById('product-tag').value || undefined; 
+    const customText = document.getElementById('product-custom-text').value || undefined; 
     const images = document.getElementById('product-images').value.split(',').map(url => url.trim());
      const tiktokVideoId = document.getElementById('tiktokVideoId').value.trim() || undefined;
     const reloadInterval = document.getElementById('reloadInterval').value.trim() ? parseInt(document.getElementById('reloadInterval').value) : undefined;
     const colors = Array.from(document.querySelectorAll('#color-list > div')).map((div, index) => ({
         name: document.getElementById(`color-name-${index}`).value,
-        price: parseFloat(document.getElementById(`color-price-${index}`).value) || undefined, // Only include if defined
+        price: parseFloat(document.getElementById(`color-price-${index}`).value) || undefined, 
         image: document.getElementById(`color-image-${index}`).value,
         stock: document.getElementById(`color-stock-${index}`).checked,
-        compare: parseFloat(document.getElementById(`color-compare-${index}`).value) || undefined, // Only include if defined
-        discount: parseFloat(document.getElementById(`color-discount-${index}`).value) || undefined, // Only include if defined
-        preOrder: document.getElementById(`color-preorder-${index}`).checked ? true : undefined // Only include if checked
+        compare: parseFloat(document.getElementById(`color-compare-${index}`).value) || undefined, 
+        discount: parseFloat(document.getElementById(`color-discount-${index}`).value) || undefined, 
+        preOrder: document.getElementById(`color-preorder-${index}`).checked ? true : undefined 
     }));
 
     const product = {
@@ -582,28 +574,26 @@ document.getElementById('submitJsonButton').addEventListener('click', () => {
         const newProduct = JSON.parse(jsonInput); // Parse JSON input
         let products = JSON.parse(localStorage.getItem('products') || '[]');
         
-        // Ensure newProduct is an array or convert it to an array
         if (!Array.isArray(newProduct)) {
-            newProduct.id = getLastId() + 1; // Assign a new ID
+            newProduct.id = getLastId() + 1; 
             products.push(newProduct);
         } else {
             newProduct.forEach(product => {
-                product.id = getLastId() + 1; // Assign new IDs to each product
+                product.id = getLastId() + 1; 
                 products.push(product);
             });
         }
 
-        localStorage.setItem('products', JSON.stringify(products)); // Save updated products
+        localStorage.setItem('products', JSON.stringify(products)); 
         document.getElementById('floatingTextFormOverlay').style.display = 'none';
         showToast('Product(s) added successfully!', 'success');
-        displayProducts(); // Refresh the product list display
+        displayProducts(); 
 
     } catch (error) {
         showToast('Invalid JSON input!', 'error');
     }
 });
 
-// Helper function to get the last ID used
 function getLastId() {
     let products = JSON.parse(localStorage.getItem('products') || '[]');
     if (products.length === 0) return 0;
