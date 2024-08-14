@@ -1,3 +1,17 @@
+//   document.addEventListener('DOMContentLoaded', function() {
+//         const textarea = document.getElementById('product-images');
+        
+//         function adjustHeight() {
+//             textarea.style.height = 'auto'; // Reset height
+//             textarea.style.height = textarea.scrollHeight + 'px'; // Set to scrollHeight
+//         }
+        
+//         // Adjust height on input
+//         textarea.addEventListener('input', adjustHeight);
+        
+//         // Initial adjustment in case there's pre-filled text
+//         adjustHeight();
+//     });
 document.getElementById('product-images').addEventListener('input', function() {
     const container = document.getElementById('image-preview');
     const urls = this.value.split(',').map(url => url.trim());
@@ -194,7 +208,8 @@ function createColorField(index, color = {}) {
             <input type="text" id="color-name-${index}" name="colors[${index}][name]" value="${color.name || ''}" required>
 
             <label for="color-price-${index}">Price:</label>
-            <input type="number" id="color-price-${index}" name="colors[${index}][price]" value="${color.price || ''}" step="1.00" required>
+<input type="text" id="color-price-${index}" name="colors[${index}][price]" value="${color.price || ''}" required>
+
         </div>
 
         <label for="color-image-${index}">Image URL:</label>
@@ -206,10 +221,11 @@ function createColorField(index, color = {}) {
             
         <div class="color-field-row">
             <label for="color-compare-${index}">Compare Price (optional):</label>
-            <input type="number" id="color-compare-${index}" name="colors[${index}][compare]" value="${color.compare || ''}" step="1.00">
+<input type="text" id="color-compare-${index}" name="colors[${index}][compare]" value="${color.compare || ''}">
 
-            <label for="color-discount-${index}">Discount (0 to 1, optional):</label>
-            <input type="number" id="color-discount-${index}" name="colors[${index}][discount]" value="${color.discount || ''}" step="1.00" min="0" max="1">
+<label for="color-discount-${index}">Discount (0 to 1, optional):</label>
+<input type="text" id="color-discount-${index}" name="colors[${index}][discount]" value="${color.discount || ''}">
+
         </div>
 
         <button type="button" class="remove-color" data-index="${index}">Remove Color</button>
@@ -261,9 +277,23 @@ function createColorField(index, color = {}) {
                 document.getElementById('product-discount').classList.toggle('hide', this.checked);
             });
 
-            function formatDescription(description) {
-                return `<p>${description.replace(/\n/g, '<br>')}</p>`;
-            }
+           function formatDescription(description) {
+    // Escape HTML special characters to prevent XSS
+    const escapeHtml = (text) => {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, (m) => map[m]);
+    };
+
+    // Escape the description and replace newlines with <br>
+    return `<p>${escapeHtml(description).replace(/\n/g, '<br>')}</p>`;
+}
+
 function displayProducts() {
     const searchQuery = document.getElementById('search-bar').value.toLowerCase();
     const selectedCategory = document.getElementById('category-filter').value;
@@ -309,8 +339,8 @@ function displayProducts() {
              <td>${product.compare !== undefined ? `$${product.compare}` : ''}</td>
             <td>${product.discount !== undefined ? `${product.discount * 100}%` : ''}</td>
             <td>${product.preOrder !== undefined ? (product.preOrder ? 'Yes' : 'No') : ''}</td>
-            <td>${product.tiktokVideoId ? stripHTMLTags(product.tiktokVideoId) : 'N/A'}</td>
-            <td>${product.reloadInterval !== undefined ? `${product.reloadInterval} ms` : 'N/A'}</td>
+            <td>${product.tiktokVideoId ? stripHTMLTags(product.tiktokVideoId) : ''}</td>
+            <td>${product.reloadInterval !== undefined ? `${product.reloadInterval} ms` : ''}</td>
             <td>${product.tag || ''}</td>
             <td>${product.customText || ''}</td>
             <td>${product.colors.length > 0 ? `${product.colors.length} ${product.colors.length > 1 ? 'Colors' : 'Color'}` : 'No Colors'}</td>
@@ -597,5 +627,4 @@ document.getElementById('submitJsonButton').addEventListener('click', () => {
 function getLastId() {
     let products = JSON.parse(localStorage.getItem('products') || '[]');
     if (products.length === 0) return 0;
-    return Math.max(...products.map(product => product.id));
-}
+    r
