@@ -1161,5 +1161,51 @@ const products = [
             category: 'ផ្សេងៗ',
             description: '<p></p>',
              price: 5
+        },
+   {
+            id: 65,
+            name: 'ម្សៅត្រនាប់ mint ',
+            images: ['https://i.pinimg.com/474x/46/a2/bd/46a2bd88b5a86f6a245abbc37295022e.jpg', 'https://i.pinimg.com/474x/88/64/4d/88644dc79d779add034e03d3a991c358.jpg'],
+            colors: [{
+                    name: 'មួយប្រអប់', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/46/a2/bd/46a2bd88b5a86f6a245abbc37295022e.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: 'មួយប្រអប់+ជក់', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/474x/88/64/4d/88644dc79d779add034e03d3a991c358.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p>ម្សៅត្រនាប់ mint  បិទបាំងស្នាមបានល្អ ធានាជូនណាបង 👉ប្រើហើយគឺស្អាតបែបធម្មជាតី ធន់ញើស ការពារបាន12ម៉ោង👉ប្រើបានទាំងបង បុរស និង នារី 👉ជួយបិតបាំងបានទាំងស្នាម មុន ស្នាមជាំ នឹងរុន្ធរោម បានយ៉ាងល្អ</p>',
+        },
+{
+            id: 66,
+            name: 'ក្រេមព្យាបាលបបូរមាត់',
+            images: ['https://i.pinimg.com/736x/8d/50/f2/8d50f26231be668826e9d26646fdb48a.jpg', 'https://i.pinimg.com/736x/4d/8b/d1/4d8bd189e2469e1821ad75f11f42e9f2.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>ក្រេមព្យាបាលបបូរមាត់ 🥰❤️<br>🍓ព្យាបាលបបូរមាត់ខ្មៅ<br>🍓បំបាត់បញ្ហាស្ងួតប្រះរបកឈាម<br>🍓ផ្ដល់សំណេីមដល់បបូរមាត់<br>🍓ជម្រុះនិងសម្អាតកោសិការនិងកំណកក្រេម<br>🍓ធ្វេីអោយបបូរមាត់ទន់រលោងនិងសុីជម្ពូរ<br>ធានាគុណភាព និង តម្លៃ គុណភាពល្អលេីសការរំពឹងទុក ✅</p>',
+             price: 5
+        },
+{
+            id: 67,
+            name: 'ស្តេចសេរ៉ូបណ្តុះរោម',
+            images: ['https://i.pinimg.com/736x/dd/d1/23/ddd1238d094aa056b94c78bc1de39da2.jpg', 'https://i.pinimg.com/736x/16/cd/61/16cd61163e0576c10a7679d550bf2497.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>ស្តេចសេរ៉ូបណ្តុះរោម<br>ជួយបណ្តុះ<br>រោមភ្នែក<br>រោមមុខ និងថ្ងាស<br>រោមចិញ្ចើម<br>រោមពុកមាត់<br>ប្រើបានទាំងប្រុសស្រី ក្មេងចាប់ពីអាយុ5ឆ្នាំ<br>ប្រើរាល់ថ្ងៃ3-7ថ្ងែឃើញផលដុះក្រាស់ទាក់ទាញដុះពិតៗ</p>',
+             price: 5
         }
 ];
