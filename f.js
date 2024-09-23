@@ -1,630 +1,1163 @@
-//   document.addEventListener('DOMContentLoaded', function() {
-//         const textarea = document.getElementById('product-images');
-        
-//         function adjustHeight() {
-//             textarea.style.height = 'auto'; // Reset height
-//             textarea.style.height = textarea.scrollHeight + 'px'; // Set to scrollHeight
-//         }
-        
-//         // Adjust height on input
-//         textarea.addEventListener('input', adjustHeight);
-        
-//         // Initial adjustment in case there's pre-filled text
-//         adjustHeight();
-//     });
-document.getElementById('product-images').addEventListener('input', function() {
-    const container = document.getElementById('image-preview');
-    const urls = this.value.split(',').map(url => url.trim());
-
-    container.innerHTML = ''; // Clear the container
-
-    urls.forEach(url => {
-        if (url) {
-            const img = document.createElement('img');
-            img.src = url;
-            container.appendChild(img);
-        }
-    });
-}); 
-function showToast(message, type) {
-  Toastify({
-    text: message,
-    duration: 3000, // Duration in milliseconds
-    close: true,
-    gravity: "top", // `top` or `bottom`
-    position: "right", // `left`, `center` or `right`
-    backgroundColor: type === "success" ? "green" : "red",
-    stopOnFocus: true // Prevents dismissing of toast on hover
-  }).showToast();
-}    
-    // Function to toggle the console output visibility
-function toggleConsoleOutput() {
-    const consoleOutput = document.getElementById('console-output');
-    const showConsoleButton = document.getElementById('show-console');
-
-    // Check the current display style of the console output
-    if (consoleOutput.style.display === 'none' || consoleOutput.style.display === '') {
-        // Show the console output
-        consoleOutput.style.display = 'block';
-        showConsoleButton.textContent = 'Hide Console Output'; // Update button text
-    } else {
-        // Hide the console output
-        consoleOutput.style.display = 'none';
-        showConsoleButton.textContent = 'Show Console Output'; // Update button text
-    }
-}
-
-// Event listener for the Show Console Output button
-document.getElementById('show-console').addEventListener('click', toggleConsoleOutput);
-
-
-        const openFormButton = document.getElementById('openFormButton');
-    const closeFormButton = document.getElementById('closeFormButton');
-    const floatingFormOverlay = document.getElementById('floatingFormOverlay');
-
-    openFormButton.addEventListener('click', () => {
-        floatingFormOverlay.style.display = 'flex';
-    });
-
-    closeFormButton.addEventListener('click', () => {
-        floatingFormOverlay.style.display = 'none';
-    });
-
-    // Close the form when clicking outside the form container
-    floatingFormOverlay.addEventListener('click', (event) => {
-        if (event.target === floatingFormOverlay) {
-            floatingFormOverlay.style.display = 'none';
-        }
-    });
-    
-        document.addEventListener('DOMContentLoaded', () => {
-            const productForm = document.getElementById('product-form');
-            const colorsContainer = document.getElementById('colors-container');
-            const colorList = document.getElementById('color-list');
-            const addColorButton = document.getElementById('add-color');
-            const productList = document.getElementById('product-list');
-            const consoleButton = document.getElementById('show-console');
-            const consoleOutput = document.getElementById('console-output');
-            const hasColorsCheckbox = document.getElementById('has-colors');
-            const resetIdsButton = document.getElementById('reset-ids');
-            
-            const removeBlankSpacingButton = document.getElementById('remove-blank-spacing');
-            const copyConsoleTextButton = document.getElementById('copy-console-text');
-
-            let colorCount = 0;
-            let editingProductId = null;
-            
-            
-            Sortable.create(productList, {
-                onEnd: function (evt) {
-                    // Reorder the IDs when dragging ends
-                    reorderProductIds();
-                    // setTimeout(reorderProductIds, 2000);
-
-                }
-            });
-
-            function reorderProductIds() {
-                let products = JSON.parse(localStorage.getItem('products') || '[]');
-                products = products.sort((a, b) => a.id - b.id); // Ensure products are sorted by original ID
-                const updatedProducts = [];
-
-                productList.querySelectorAll('.product-row').forEach((row, index) => {
-                    const productId = parseInt(row.dataset.id);
-                    const product = products.find(p => p.id === productId);
-                    if (product) {
-                        product.id = index + 1; // Reassign IDs sequentially
-                        updatedProducts.push(product);
-                    }
-                });
-
-                localStorage.setItem('products', JSON.stringify(updatedProducts));
-                displayProducts(); // Refresh the product list
+const products = [
+   {
+        id: 1,
+        name: 'ម៉ាសវេទមន្តផ្កាស្មៅ និងឈុត',
+        images: [
+            'https://i.pinimg.com/474x/58/cf/5a/58cf5a6d82ed6836d3f7afe0ffe484de.jpg',
+            'https://i.pinimg.com/474x/3b/fd/3a/3bfd3a865d5a9fa79083bb765cad9633.jpg',
+            'https://i.pinimg.com/474x/e3/89/46/e38946fce93e062c87fb2f3978f9346e.jpg',
+            'https://i.pinimg.com/474x/10/1d/33/101d33cb3160d196fadf15a2777ac032.jpg',
+            'https://i.pinimg.com/474x/31/92/9f/31929ff7cee26a7ed75b737037f2061d.jpg',
+            'https://i.pinimg.com/474x/2a/41/3f/2a413f6f98227197dd56b8114dab736b.jpg',
+            'https://i.pinimg.com/474x/b2/dc/17/b2dc174996d49d211e09ebe28fa46a96.jpg',
+            'https://i.pinimg.com/474x/1a/b3/bf/1ab3bf0cc3d6b497ac71e92b2a894e54.jpg'
+        ],
+        colors: [
+            {
+                name: 'ឈុតតូច​',
+                price: 10,
+                image: 'https://i.pinimg.com/474x/e3/89/46/e38946fce93e062c87fb2f3978f9346e.jpg',
+                stock: true,
+            },
+            {
+                name: 'ឈុតកណ្តាល ',
+                price: 16,
+                image: 'https://i.pinimg.com/474x/10/1d/33/101d33cb3160d196fadf15a2777ac032.jpg',
+                stock: true,
+                compare: 32,
+                discount: 0.5,
+            },
+            {
+                name: 'ឈុតធំ',
+                price: 21,
+                image: 'https://i.pinimg.com/474x/31/92/9f/31929ff7cee26a7ed75b737037f2061d.jpg',
+                stock: true,
+            },
+             {
+                name: 'ម៉ាសវេទមន្តផ្កាស្មៅ​កំប៉ុងតូច​',
+                price: 2.5,
+                image: 'https://i.pinimg.com/474x/58/cf/5a/58cf5a6d82ed6836d3f7afe0ffe484de.jpg',
+                stock: true,
+            },
+             {
+                name: 'ម៉ាសវេទមន្តផ្កាស្មៅ​កំប៉ុង​ធំ​ ',
+                price: 8,
+                image: 'https://i.pinimg.com/474x/3b/fd/3a/3bfd3a865d5a9fa79083bb765cad9633.jpg',
+                stock: true,
             }
-            function getLastId() {
-                return parseInt(localStorage.getItem('lastId')) || 0;
-            }
+        ],
+        stock: true,
+        category: 'មុខ',
+        description: '<p>✨😊សុំបញ្ជាក់ណាបងវាម៉ាសវេទមន្តផ្កាស្មៅ​ ...</p>',
+    },
+    {
+            id: 2,
+            name: 'ជេលស្រ្កាប់វេទមន្ត​ ',
+            images: ['https://i.pinimg.com/474x/de/f2/a0/def2a056ebd3dc2d10357145e4bb7dc6.jpg', 'https://i.pinimg.com/474x/69/04/af/6904af1a92fe27de793cf2ca0d1230eb.jpg', 'https://i.pinimg.com/474x/95/91/3d/95913daaef60e8f02742e4d4eea9e125.jpg', 'https://i.pinimg.com/474x/7f/7c/d6/7f7cd6f9057ec66fc40495ac88ec3b32.jpg', 'https://i.pinimg.com/474x/79/54/62/79546225bdbd0b18b5f4a0e5aa37f7ac.jpg', 'https://i.pinimg.com/474x/db/7a/b6/db7ab694a4f1647ee21bce6b15ae9d05.jpg', 'https://i.pinimg.com/474x/90/3c/db/903cdb97644ef1cd9aa41a183c71ce01.jpg', 'https://i.pinimg.com/474x/5e/2c/bb/5e2cbb1cfaf1deccc01b8d3ccfe8d2a5.jpg', 'https://i.pinimg.com/474x/22/59/2b/22592b0156f441e4967872e448b26d21.jpg'],
+            colors: [{
+                    name: 'កំប៉ុងតូច', 
+                    image: 'https://i.pinimg.com/474x/22/59/2b/22592b0156f441e4967872e448b26d21.jpg', 
+                    stock: true,
+                    price: 4,
+                    compare: 8,
+                    discount: 0.5,
+                },
+{
+                    name: 'កំប៉ុងធំ', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/90/3c/db/903cdb97644ef1cd9aa41a183c71ce01.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>✨ជេលស្រ្កាប់វេទមន្ត​ ✨🌼ជាផលិតផលរបស់ប្រទេសជប៉ុន​<br>ជួយធ្វេីអោយស្បែកសរ​ ម៉ត់រលាង​ ផ្តល់វីតាមីន​ ជាច្រេីនប្រភេទដល់ស្បែក​ ⭐️ជំរុញកោសិកាចាស់ៗ​ ស្បែកខ្មៅស្រអាប់​ ជួយកាត់បន្ថយស្នាម​អុចខ្មៅ​ ស្បែកខ្មៅស្រអាប់​🌑 កម្ចាត់ធូលីដី​ 💨ស្រទាប់ស្បែកដែរងាប់​ ជួយកម្ចាត់ប្រេង​ នៅលេីស្បែក​ និងជាពិសេសទៅទៀតនោះធ្វេីអោយស្បែក​ ក្មេងជាងវ័យ​ សរម៉ត់រលាង​😊និងផ្តល់សំណេីមខ្ពស់ដល់ស្បែក✨💦💧</p>',
+        },
 
-            function setLastId(id) {
-                localStorage.setItem('lastId', id);
-            }
-              function resetIds() {
-        // Retrieve products from localStorage
-        let products = JSON.parse(localStorage.getItem('products') || '[]');
-        if (products.length === 0) return;
+  {
+    id: 3,
+    name: '🌸Whitening spot Cream🌸',
+    images: ['https://i.pinimg.com/474x/1e/b8/8b/1eb88bbe2bac633106f88de92d520340.jpg', 'https://i.pinimg.com/736x/46/68/b8/4668b8b04145eab64f920fd4debd619b.jpg', 'https://i.pinimg.com/736x/99/86/2b/99862ba6ee0783e4e06b4e2cc3ffb4d2.jpg', ''],
 
-        // Reassign IDs sequentially
-        products = products.map((product, index) => {
-            product.id = index + 1;  // Set ID to index + 1
-            return product;
-        });
+    colors: [
+      {
+        name: 'ប្រអប់តូច',
+        price: 5,
+        image: 'https://i.pinimg.com/736x/46/68/b8/4668b8b04145eab64f920fd4debd619b.jpg', 
+        stock: true
+      },
+      {
+        name: 'ប្រអប់ធំ',
+        price: 8,
+          image: 'https://i.pinimg.com/736x/99/86/2b/99862ba6ee0783e4e06b4e2cc3ffb4d2.jpg', 
+        stock: true
+      }
+    ],
+    stock: true,
+    category: 'មុខ',
+    description: '<p>🌸Whitening spot Cream🌸ជាប្រភេទcream ខូលេជិន​និងសំបូរទៅដោយវីតាមីនជាច្រេីនមុខ​ ដែរជួយព្យាបាទទៅលេី✨សា្នមមុន​ ជាំ​ អាចម៍រុយ​ បំបាត់ស្នាមអុចខ្មៅ✨ផ្តល់សំណេីមខ្ពស់ទៅលេីស្បែកមុខ✨ធ្វេីអោយស្បែកតឹង​ ទន់​ ភ្លឺម៉ត់រលាង​ និងភ្លឺថ្លាចេញពី​               ខាងក្នុង✨ជួយផ្តល់អុកសុីសែនដល់ស្បែក ✨ជួយជួសជុលកោសិកាចាស់ៗដែលខូច ✨ជួយឱ្យមុខទន់រលោង ភ្លឺចេញពីខាងក្នុង✨លាងសំអាតជាតិពុលនៅក្នុងស្បែកមុខ និងបង្រួមរន្ធញើស អោយរួចតូច✨បន្តឹងស្បែកមុខ អោយតឹងណែនហាប់ ✨ជួយបំបាត់មុន មុខក្រហម ✨កាត់បន្ថយរោល និង អាឡែកសុីអោយស្បែកមានសុខភាពល្អឡេីងវិញ💧ចំណុះ  20g និង 50g👬ប្រេីបានទាំងបុរសនិងស្រ្តី☺️ងអស់</p>',
+  },
+  {
+  id: 4,
+  name: '🐄គ្រីស​ទឹកដោះគោវេទមន្ត​🐄☁️',
+  images: ['https://i.pinimg.com/474x/a5/2b/cb/a52bcb532038bbd90a092b36c884a77f.jpg'],
+  stock: true,
+  category: 'មុខ',
+  description: '<p>🐄គ្រីសទឹកដោះគោវេទមន្ត​🐄☁️<br>ជួយបឺតយកសារជាតិពុលចេញពីស្បែក​💨 ធ្វេីអោយស្បែកសរភ្លឺទន់រលាង⛅️​ ផ្តល់វីតាមីនជាច្រេីប្រភេទដែរធ្វេីអោយស្បែក​ មិនងាយចាស់ជាងវ័យ​👩 ការពារនិងការលាងស្បែកផ្សេង​ កាន់តែប្រេីគ្រីសទឹកដោះគោវេទមន្តស្បែកកាន់តែសរភ្លឺ​ ម៉ត់រលាង​😊✨<br>ប្រេីបានទាំងបុរស​👱 និងស្រ្តី​ 👩<br>អប់ទុកនៅលេីស្បែកត្រឹមតែរយៈពេល20 នាទីតែប៉ុណ្ណោះ​ 😊✨🌸</p>',
+  price: 5,
+},
 
-        // Save updated products back to localStorage
-        localStorage.setItem('products', JSON.stringify(products));
+{
+            id: 5,
+            name: '✨ក្រេមញុាំការSherffy',
+            images: ['https://i.pinimg.com/474x/79/bf/06/79bf06c44af1ffc856715e740bdbe6db.jpg', 'https://i.pinimg.com/474x/90/b1/8e/90b18eed37c9da6370d77e3a93040e5e.jpg', 'https://i.pinimg.com/474x/02/7a/27/027a27a762e449da9aacbfdd04930b38.jpg',],
+            colors: [{
+                    name: ' ឈូក', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/79/bf/06/79bf06c44af1ffc856715e740bdbe6db.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                },
+{
+                    name: 'ក្រហម', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/90/b1/8e/90b18eed37c9da6370d77e3a93040e5e.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                },
+{
+                    name: 'ក្រហមក្រម៉ៅ', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/02/7a/27/027a27a762e449da9aacbfdd04930b38.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨ក្រេមញុាំការSherffyជាប់បាន24 ម៉ោងពណ៌ក្រេមដុតល្អ ធុននិងទឹកជាប្រភេទក្រេមតរលាងសាច់ម៉ត់ល្អ បបូរមាត់ខ្មៅស្រអាប់ ឫ ប្រេះក៏អាចប្រើក្រេម Sheffy នេះបានដែរណាវានិងជួយព្យាបាទអោយបបូរមាត់មានសុខភាពល្អឡើងវិញ✨</p>',
+        },
+{
+            id: 6,
+            name: 'hismile',
+            images: ['https://i.pinimg.com/474x/55/8b/0e/558b0e7eea50219d73006a083589417f.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨hismile ល្បីខ្លាំងនៅប្រទេស​អាមេរិក​🇺🇸 ជំនាញខ្លាំង​ ទៅលេីបញ្ហាធ្វេីអោយធ្មេញសរ​ បែបធម្មតាពិតៗ​ តែម្តង​ តាំងពីប្រេីលេីកទី1 បានមកដល់ប្រទេសកម្ពុជា​🇰🇭ហេីយណាបងៗ😊⭐️<br>🍃មិនត្រឹមតែជួយអោយធ្មេញសរ​ តែម្យ៉ាងទេ​ ថែមទាំងជួយបំបាត់រាល់បញ្ហា​ សៀវធ្មេញ​ ក្លិនមាត់​ និង​ ជួយថែរក្សាអញ្ចាញធ្មេញ​ធ្វេីអោយធ្មេញមាននូវសុខភាពល្អ​ និង​ សំបូរទៅដោយសារធាតុផ្សំល្អៗដែរផ្តល់វីតាមីន​ដល់ធ្មេញ​ធ្វេីអោយធ្មេញរឹងមាំ​  និងបន្ថែមទៀតនោះមិនធ្វេីអោយយេីងងាយនិងមាននូវពងបែកមាត់​✨🍃<br>👩👱ប្រេីបានទាំងបុរស​ និង​ ស្រ្តី✨</p>',
+             price: 8
+        },
+        {
+            id: 7,
+            name: 'ឈុតPretty Make up',
+            images: ['https://i.pinimg.com/474x/5f/f8/4c/5ff84c03d6949e4da0717a51572fd87c.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+              description: '<p>✨ឈុតPretty Make up ✨<br>ជាផលិតផលរបស់ប្រទេសកូរ៉េ🇰🇷<br>🌻ក្នុងមួយឈុតមាន​4មុខ✨<br>🌼Glowខូសិន1 <br>🌼BB cream1  <br>🌼សៅហុយ​បីពណ័1  និង  ប៉ុង1✨<br>🌻អត្ថប្រយោជន៍​ ជួយបិទបាំងស្នាមបានយ៉ាងល្អ​😊 ធន់និងទឹក​💦 លាបចូលមុខល្អ​  ⏰ មិនប្រតាក​ជាប់បាន24ម៉ោង​👩មិនចំណាយពេលច្រេីន​ ងាយស្រួលដាក់តាមខ្លួន😊⭐️កាន់តែលាបកាន់តែស្អាត​ ស្បែកមុខស្តេីង​ ប៉ុនណាក៏អាចប្រេីបានដែរ​<br>ជាពិសេសប្រេីបានទាំង​ បុរស👱​ និងស្រ្តី👩</p>',
+    price: 8
+        },
 
-        // Update last ID in localStorage
-        setLastId(products.length);
-
-        // Refresh product display
-        displayProducts();
-    }
-
-    // Event listener for Reset IDs button
-    document.getElementById('reset-ids').addEventListener('click', () => {
-        if (confirm('Are you sure you want to reset IDs?')) {
-            resetIds();
-             showToast('IDs have been reset successfully!', 'success');
+        {
+            id: 8,
+            name: 'O melin Crystal Cream​',
+            images: ['https://i.pinimg.com/474x/41/a6/57/41a6570205a8ac0280afb7920110118c.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: false,
+            category: 'មុខ',
+            description: '<p>✨O&#039;melin Crystal Cream​ ជាប្រភេទសាច់គ្រីមវេទមន្ត​    ​គ្រាន់តែប្រេីកន្លែងណា​ សរកន្លែង​ និង​មិនចាំបាច់ចំណាយពេលវេលា⌚️ច្រេីននៅក្នុងការMake upជាពិសេសគឺសំបូលទៅដោយសារធាតុវីតាមីន🎊ជាច្រេីនដែរជួយអោយស្បែកមុខបងៗ​មានភាពសរ​ ទន់ភ្លឺម៉ត់រលាងឡេីងវិញ​ 😊ជាពិសេសទៅទៀតនោះប្រឆាំងនិងភាពជ្រីវជ្រួញ​ និង​ផ្តល់សំណេីមខ្ពស់នៅលេីស្បែកមុខ​បែប​ Glow Skin​ ✨និងបថ្ថែមទៅទៀតនោះ ធ្វេីអោយស្បែកមុខក្មេងជាងវ័យមិនងាយចាស់​ ជួយបង្រួមគល់រោម​ រន្ធញេីសអោយ​ រួមតូច​ សែ្បកមុខតឹងហាប់ណែន​ បែបទាក់ទាញ​✨🌿🌻 <br>🌸ប្រេីបានទាំងបុរស​ និងស្រ្តី​ គ្រប់វ័យ​ សំប្បីតែបងៗដែរមានផ្ទៃពោះក៏អាចប្រេីប្រេីប្រាស់​ ជាមួយនិងO&#039;melin Crystal Cream​ នេះបានដែរ😊✨</p>',
+             price: 5
+        },
+        {
+            id: 9,
+            name: 'ពុំផាត់ចិញ្ចើម ',
+            images: ['https://i.pinimg.com/474x/75/e7/01/75e701938d8bb97e0baef1ba14e02b2c.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>ពុំផាត់ចិញ្ចើម 😊ងាយសំរាប់បងៗដែរអត់ចេះគូសចិញ្ចេីម​ គ្រាន់តែមានឈុត​ ពុំនេះអស់កង្វល់ទៀត​ ផាត់ស្អាតជាងគូសដៃខ្លួនឯងទៀត​ ធន់និងទឹក​បានយ៉ាងល្អ💦ជាប់បានយូរ ជាមួយនិងតម្លៃពិសេស​ 1ឈុតត្រឹមតែ5$ ទេ​បងៗ​ មានម្សៅផាត់3ពណ័​ មួយប្រអប់​ និង​ សន្លឹះពុំចិញ្ចេីម​15​ ✨</p>',
+             price: 5
+        },
+{
+            id: 10,
+            name: 'ខ្មៅដៃ​គូសចិញ្ចើម​ 3D',
+            images: ['https://i.pinimg.com/736x/76/55/39/7655394460f9733d05ab0d5e426c9dac.jpg', 'https://i.pinimg.com/736x/01/56/58/015658b3f12a8276e5b5f7790c0a44da.jpg', 'https://i.pinimg.com/736x/1d/e9/3a/1de93a46a854537f04d54d0d36cbf6f3.jpg', 'https://i.pinimg.com/474x/f1/ec/11/f1ec115207a8d9ae3fe3fb1677b06c98.jpg', 'https://i.pinimg.com/474x/4c/d2/a3/4cd2a35449ca76dc57ac60fefe8fb1e3.jpg', 'https://i.pinimg.com/474x/63/7e/81/637e81cafc10fed7c19754abd24da8cc.jpg'],
+            colors: [{
+                    name: '01#', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/736x/01/56/58/015658b3f12a8276e5b5f7790c0a44da.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '02#', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/736x/1d/e9/3a/1de93a46a854537f04d54d0d36cbf6f3.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '03#', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/f1/ec/11/f1ec115207a8d9ae3fe3fb1677b06c98.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '04#', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/4c/d2/a3/4cd2a35449ca76dc57ac60fefe8fb1e3.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '05#', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/63/7e/81/637e81cafc10fed7c19754abd24da8cc.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'មុខ',
+            description: '<p>ខ្មៅដៃ​គូសចិញ្ចើម​ 3D ងាយៗ​មិនពិបាកគូសទេបងៗ​ អ្នកអត់ចេះគូសចិញ្ចេីមក៏ចេះគូសដែរពេលដែរបានប្រេីខ្មៅដៃមួយនេះ​ គូសបានស្អាតល្អ​ ចិញ្ចេីម​មានសរសៃរស្អាតដូចធម្មជាតិពិត​😊មាន5 ពណ៌សំរាប់ជ្រេីសរេីស​ ធុននិងទឹក​💦ជាប់បានយូរ​ 🌻ចេញពណ៌​ ដុតល្អ​ 🌸</p>',
+        },
+{
+            id: 11,
+            name: 'Liora Smooth sunblock ',
+            images: ['https://i.pinimg.com/474x/31/6a/fc/316afcd2e4e4bd5d8edef1d462da6319.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>Liora Smooth sunblock 💓💓<br>មានមុខងារ២មុខយ៉ាងពិសេស💡<br>មិនធ្វើអោយស្ទះរុទ្ធរោម ឡើងមុន កកប្រតាក <br>គ្មានជាតិអាល់កុលនិងបារ៉ត់ គ្រប់ដណ្ដប់ស្បែកមុខមានសំណើម សរម៉ត់ សាច់លេមិនក្រាស់និងស្ដើងពេក 💦<br>សាកសមសម្រាប់អ្នកចូលចិត្តផាត់មុខស្រាលៗ<br>បិទបាំងស្នាមបានល្អSPF 50PA +++✨<br><br>✨New Product have instock✨</p>',
+             price: 5
+        },
+{
+            id: 12,
+            name: 'បកមុនទឹកឃ្មុំ',
+            images: ['https://i.pinimg.com/736x/01/c3/9f/01c39fdebb3de0cfc53c1af5ab9eff1b.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>បកមុនទឹកឃ្មុំ🐝បកចេញពិតៗ មុនខ្សាច់ មុនអង្កាម គ្មានសល់ ជួយផ្តិតរុញរោម ជម្រុះកោសិកាចាស់ បានយ៉ាងមានប្រសិទ្ធិភាព✨</p>',
+             price: 5
+        },
+{
+            id: 13,
+            name: 'Glossy Glow CC Cream',
+            images: ['https://i.pinimg.com/474x/b4/ae/ba/b4aebaf2ed365840114effeec03e4a18.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨Glossy Glow CC Cream✨ ល្អប្រើសាហាវបងៗ គ្រាន់តែលាបលើស្បែកមុខ ចូលអស់ៗតែម្តងមិនបាញ់ប្រើប៉ុង ជាពិសេសបិទបាំងស្នាមបានយ៉ាងល្អ✨ ធន់និងទឹក💦 ធ្វើអោយMake up ជាប់បានយូរ ⛅️ការពារកំម្តៅថ្ងៃបានយ៉ាងមានប្រសិទ្ធិភាព✨😘តម្លៃសមរម្យ✨</p>',
+             price: 5
+        },
+{
+            id: 14,
+            name: 'FV Foundation',
+            images: ['https://i.pinimg.com/474x/d9/44/3a/d9443afa5d6c0935802b09f49c951866.jpg', 'https://i.pinimg.com/474x/90/e6/c6/90e6c64aa00a8c4f0a8d8c603703084a.jpg', 'https://i.pinimg.com/474x/d9/ef/f8/d9eff8439af16ea9c1d5d465eba7f3d0.jpg', 'https://i.pinimg.com/474x/ca/56/6e/ca566eeeddf8a7c06799aad1089fee55.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨FV Foundation គឺជាប្រភេទម្សៅទ្រនាប់ដែរបិទបាំងស្នាមបានយ៉ាងល្អ​ និងផ្តល់សំណេីមខ្ពស់ទៅលេីស្បែកមុខ​☺️<br>✨អត្ថប្រយោជន៍<br>🌻កាពារកម្តៅថ្ងៃបានល្អ🌞<br>🌻ធន់នឹងទឹក💦👍<br>🌻ផ្តល់សំណេីមដល់ស្បែកមុខ💧<br>🌻ទទួលបានស្បែកមុខបែបទន់រលោង💫✨<br>🌻ទប់ស្កាត់ជាតិខ្លាញ់បានល្អ✨<br>🌻ជួយបិទបាំងស្នាមជាំ អាចម៌រុយ មុន កប់ មុនខ្សាច់បា​នយ៉ាងល្អ🥰🤍<br>🌻សាច់មិនក្រាស់មិនស្តេីង🌞✨<br>🌻មិនប្រតាក​ 😊🌹<br>🌻មិនប្រឡាក់ម៉ាស😷✨<br>🌻មិនហូរទៅតាមញេីស💦☔️<br>🌻គ្មានសារធាតុបង្កអោយឡេីងមុនសាច់ មុនអង្កាម👍🤍<br>🌻កម្រឹតក្លិនទាបបំផុត ទោះមុនឆាប់ប្រតិកម្មក៏អាចប្រេីបាន<br>🌻ឆាប់ជ្រាប់ចូលស្បែកមុខ​ បានយ៉ាងលឿន ជាប់បានរហូត12h<br>🌻សាច់ឡេមិនកក់ មិនស្អិតមុខ ងាយស្រួលលាបសាច់ឡេមិនក្រាស់ដែរនាំឲធ្ងន់មុខទេ✨<br>🌹FV Foundation អាចប្រេីប្រាស់បានទាំងបុរស​ និងស្រ្តី​ ✨😊<br>💧ចំណុះ30g ✨</p>',
+             price: 8
+        },
+{
+            id: 15,
+            name: 'BB V',
+            images: ['https://i.pinimg.com/474x/3a/62/06/3a62061fce93b68849e95e5b38dd4103.jpg', 'https://i.pinimg.com/736x/53/e6/e9/53e6e96e14197d915cdd913b2e89ab0d.jpg', 'https://i.pinimg.com/474x/6b/69/ad/6b69adeebef63a205c9d1f938f7e60e7.jpg', 'https://i.pinimg.com/736x/21/a0/d2/21a0d2d9b384435254551912147114e7.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>BB V Tender the skinចូលស្តុកវិញហេីយបងៗ✨<br>✨អត្ថប្រយោជន៍ៈ<br>🌻លាបចូលស្បែកមុខបានយ៉ាងល្អ​<br>🌻ធ្វេីអោយស្បែលមុខមានសំណេីមជាងមុខ<br>🌻ការពារកំដៅថ្ងៃ50f<br>🌻កាន់តែលាបស្បែកមុខកាត់តែទន់រលាង​ ភ្លឺជាងមុខ​ បិទបាំងស្នាមមុខ​ និងស្នាមផ្សេងៗបានយ៉ាងមានប្រសិទិ្ធភាព<br>🌻កាន់តែលាបស្បែកមុខកាន់តែក្មេងជាងវ័យ☺️<br>✨តម្លៃពិសេស✨<br>🏠ទីតាំងៈ​ ភ្នំពេញ<br>📲011 503 974( Cellcard)</p>',
+             price: 3
+        },
+{
+            id: 16,
+            name: 'UV ចិន',
+            images: ['https://i.pinimg.com/474x/8f/b5/54/8fb5542eb07acf37875d3bbced440ec9.jpg', 'https://i.pinimg.com/474x/8c/dc/96/8cdc967962630b8fe78577a8a0b21afb.jpg', 'https://i.pinimg.com/474x/e0/e1/bf/e0e1bf74a04ff307f714d165d23fcdfc.jpg', 'https://i.pinimg.com/474x/74/ae/43/74ae43297cade8097ddd21529331ea70.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>UV ចិន 🌸 ជាប្រភេទឡេការពារកំដៅថ្ងៃ<br>- ជួយអោយស្បែកមុខត្រជាក់ ❄️❄️<br>  ធន់នឹងទឹក <br>-បែកញើសមកអត់ប្រតាក 🌈<br>- សាច់គ្រីមស្រួលលាបសំបូរទៅដោយជាតិទឹក 💧💧 <br>-ទោះលាបច្រើនដងក៏នៅតែចូលស្បែកមុខអត់កកអត់ដុំៗ<br>-មានSPF50++✨ ការពារកំដៅថ្ងៃបានខ្ពស់🤍<br>-សាច់ចូលស្បែកមុខមិនស្អិតមិនកក់ <br>-ជួយបិទបាំងស្នាម  លាបត្រជាក់ស្បែកមុខ ✨🥰<br>-លាបត្រជាក់មុខ ក្លិនក្រអូប  មុនទុនរលោង🤍✨</p>',
+             price: 3
+        },
+{
+            id: 17,
+            name: 'ម៉ាសុីនសិតសក់ត្រង់',
+            images: ['https://i.pinimg.com/736x/63/55/03/6355031eec7e76e436bd1e66ead8f336.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'សក់',
+            description: '<p>ម៉ាសុីនសិតសក់ត្រង់ មានកន្លែងសារេកម្តៅ ដល់ទៅ5លេខ កម្តៅង្ងំល្អ មិនធ្វើអោយខូចសក់ងាយស្រួលប្រើប្រាស់ដោយខ្លួនឯង មិនចាំបាច់ប្រើអ្នកដទៃអោយអុ៊តសក់អោយ សាកសំបំផុតសំរាប់យុវនារីសម័យថ្មី អោយមានភាពងាយស្រួលក្នុងការ ប្រើប្រាស់✨</p>',
+             price: 8
+        },
+{
+            id: 18,
+            name: 'ចៅហួយសិតសក់វេទមន្ត​',
+            images: ['https://i.pinimg.com/474x/4f/ab/f3/4fabf30fd4d39b90ac2c251be446ff77.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'សក់',
+            description: '<p>✨ចៅហួយសិតសក់វេទមន្ត​✨ងាយៗចំណាយពេលតិចក្នុងការ​ ធ្វេីម៉ូតបែបតារាង​ ហៃសូរ​មង​ ណាបងៗសុភាពបុរស​👱💇ដោយគ្រាន់តែសិត​ តែប៉ុណ្ណោះ​ ចង់ធ្វេីម៉ូតសក់បែបមិចក៏បាន​ ពេលប្រេីហេីយ​ សក់​មិនរឹងពេកនោះទេ​ សភាពសក់​ មានសំណេីមទាន់​ ជាប់បានយូរ​ ហេីយផ្តល់នូវវីតាមីន​ សេរ៉ូដែរជួយបណ្តុះសក់​ និងមិនធ្វេីអោយសក់ខូច​ និង​ជ្រុះ​ទៅពេលខាងមុខនោះទេណាបង✨</p>',
+             price: 8
+        },
+{
+            id: 19,
+            name: 'Lip Jelly flower',
+            images: ['https://i.pinimg.com/736x/cb/e2/12/cbe212b453ee1ecd0b0cd65c62bf6e3a.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>Lip Jelly flower ជាប្រភេទក្រេមរលាង ជាប់បាន24ម៉ោង ផ្តល់សំណើមដល់បបូរមាត់ ធ្វើអោយបបូរមាត់មានសុខភាពល្អ កាន់តែប្រើបបូរមាត់និងទទួលបានភាពទាក់ទាញ ចង់តែចាប់ថើប✨😘</p>',
+             price: 5
+        },
+{
+            id: 20,
+            name: 'ជ័រសុីលីកូត',
+            images: ['https://i.pinimg.com/474x/0b/67/fc/0b67fcb300779224cabcc6493c0c45fc.jpg', 'https://i.pinimg.com/736x/9f/41/24/9f41243ba3300d998be5d08b4fbb58ac.jpg', 'https://i.pinimg.com/736x/64/8b/0e/648b0e2aab219c6039550bb82c1863aa.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>ជើងមិនស្រលូនមែនទេ ប្រើជាមួយនិងជ័រសុីលីកូត ពាក់នៅម្រាមជើងបានណាបងៗ ដើម្បីអោយជើងស្រលូនស្អាត និងត្រង់មកវិញ✨</p>',
+             price: 3
+        },
+{
+            id: 21,
+            name: 'ម៉្សៅស្ទះលូ',
+            images: ['https://i.pinimg.com/474x/e1/55/ed/e155ed0d5e413401a33b56ee3a5167b8.jpg', 'https://i.pinimg.com/736x/2f/96/7f/2f967f03467c0466cf1853602806717f.jpg', 'https://i.pinimg.com/736x/1c/af/7b/1caf7bc627f58dc737c5111bb2d734f6.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'សក់',
+            description: '<p>បងៗមានបញ្ហាស្ទះឡាបូលាងចានឬកន្លែងងូតទឹក<br>👉👉👉👉វិធីប្រើគឹ<br>1-ទុកទឹកដែលលែងហូរអោយរីងសិន<br>2-ចាក់ទឹកក្តៅប្រហែល250ml​រួចចាក់ម្សៅចូល1ឬ2កំប៉ុង​មើលតើស្ទះខ្លាំងឬតិច<br>3-រួចចាក់ទឹកក្តៅតាមក្រោយទុកចោល20នាទីចាំទៅបើទឹកមើលបើនៅស្ទះសូមធ្វើដូចដែលរៀបរាប់ខាងលើម្តងទៀត<br>👉👉👉វិធី​ប្រើ​ស្ទះ​ដោយសារធ្លាក់វត្ថុរឹងឬកាក់សំណល់ផ្សេងៗ<br>👉ទុកទឹកក្នុង បង្គន់អោយរីងដូចធម្មតា<br>👉ចាក់​ម្សៅ​ចូល​2ឬ3កំប៉ុង​ ទៅតាមវត្ថុដែលធ្លាក់ចូល<br>👉រក្សាទឹកថ្នាំ នឹង20នាទី បន្ទាប់មក​ សប់អោយបានច្រើនដង់ដែលអាចធ្វើទៅបាន រួចចាំកាច់ទឹកថ្នាំនឹងទៅ 👌<br>❌ហាមយកដៃប៉ះម្សៅ<br>❌នឹងមានក្លិនឆួល <br>❌វានឹងឡើងពពកខ្លាំង នៅពេលប៉ះទឹក<br>❌សូម ប្រយត្ន័ ខ្ពស់</p>',
+             price: 3
+        },
+{
+            id: 22,
+            name: 'Glow Toner',
+            images: ['https://i.pinimg.com/474x/f1/5e/1f/f15e1f851c8706f0b328e8ebb5de4db9.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>💙 Glow Toner ជាទឹកជូតមុខដែលផ្ដល់សំណើមធ្វើឲ្យស្បែកមុខទន់ ភ្លឺរលោង ជាពិសេសគឺរក្សាតុល្យភាពស្បែកមុខឲ្យ រឹងមាំ មិនងាយឡើងរោល ឡើងមុនសាច់ 💧 <br><br>✔️Glpw Toner មិនមានជាតិអាកុល គ្មានសារធាតុ ដែលធ្វើឲ្យប៉ះពាល់ស្បែកមុខទេ</p>',
+             price: 5
+        },
+{
+            id: 23,
+            name: 'ស្រ្ពាយបាញ់សក់វេទមន្ត​',
+            images: ['https://i.pinimg.com/474x/44/e3/4c/44e34c50b2fa952e904d6ebae3011a10.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: false,
+            category: 'សក់',
+            description: '<p>✨ស្រ្ពាយបាញ់សក់វេទមន្ត​ ✨   🌑កម្ចាត់ជាតិខ្លាញ់លើសក់ភ្លាមៗដើម្បីឱ្យសក់ស្អាត ទន់រលោង ផ្តល់ក្លិនក្រអូប 24 ម៉ោង⏰ សក់ស្អាតដូចលាងរាល់ពេលប្រើ។ ស្ព្រាយ​ដើម្បី​កម្ចាត់​ជាតិ​ប្រេង និង​មាន​អារម្មណ៍​ស្រស់ស្រាយ👩👱​ដូច​អ្នក​ទើបតែ​កក់សក់​😊គ្រាន់​តែ​បាញ់💨​លើ​គល់​សក់​ពេល​ដែល​អ្នក​ចង់​ស្រស់​ស្រាយ​ពេល​ថ្ងៃ។ ជាមួយនឹងសក់ក្រអូបរយៈពេល 24 ម៉ោង ⏰<br>🌸របៀបប្រើ / របៀបប្រើ 1. <br>1.អ្រងួនកំប៉ុងមុនពេលប្រើ<br>2.រក្សាចម្ងាយរវាងស្បែកក្បាល និងក្បាលបាញ់ប្រហែល 8 ទៅ 10 អ៊ីញ ហើយចុចកន្លែងដែលចង់បាន។ <br>3.ម៉ាស្សាស្បែកក្បាលដើម្បីឱ្យសាប៊ូស្ងួតស្រូបប្រេងបានល្អក្នុងរយៈពេល 1 នាទី។ <br>4.សិតសក់របស់អ្នក ហើយបន្តធ្វើរចនាប័ទ្មសក់របស់អ្នកតាមតម្រូវការ។ <br><br>✨អត្ថប្រយោជន៍ ស្រ្ពាយបាញ់សក់វេទមន្ត​ ធ្វេីអោយមានសភាពសក់ស្ងួតស្រាល ជួយសម្អាត និងពង្រឹងស្បែកក្បាល ដោយមិនបាច់ប្រើសារធាតុពណ៌ ដែលធ្វើអោយសក់របស់អ្នកភ្លឺចែងចាំង។ ត្រៀមខ្លួនរួចរាល់ហើយឬនៅ ដើម្បីស្តារសក់របស់អ្នកឡើងវិញ ដើម្បីឱ្យមើលទៅស្អាតម្តងទៀត?😊</p>',
+             price: 5
+        },
+{
+            id: 24,
+            name: 'YANJIAYI COLLAGEN Friming Sleeping Mask',
+            images: ['https://i.pinimg.com/474x/1f/b0/0c/1fb00ce51546bd41eb6f7f398f4a8d59.jpg'],
+            compare: 8,
+            discount: 0.5,
+            stock: false,
+            category: 'មុខ',
+            description: '<p>🌻ម៉ាស YANJIAYI COLLAGEN Friming Sleeping Mask ចូលស្តុកបងៗ​ ចូលជេីងលែងអោយខ្វះហេីយបងៗ☺️✨💖 🌸ស្របច្បាប់ និងមានប្រសិទ្ធភាព💯💯💯 ✨មួយប្រអប់7$ មាន 20 កញ្ចប់☺️✨ ✨អត្ថប្រយោជន៍៖ 🌸ធ្វេីអោយស្បែកមុខតឹងណែនល្អ 🌸ធ្វេីអោយស្បែកភ្លឺថ្លា 🌸បំបាត់មុន 🌸បំបាត់ភាពស្ងួត និងខ្លាញ់ 🌸ប្រេីបានគ្រប់ប្រភេទស្បែក 🌸 បំបាត់ការស្ទះរន្ធញើស 🌸បំបាត់ភាពជ្រីវជ្រួញ 🌸បំបាត់ស្បែកមិនស្មើគ្នា 🌸បម្រើជាវីតាមីនសម្រាប់ស្បែករបស់យើង ជាពិសេសសំបូលទៅដោយសារជាតិCollagen✨ 🌸ល្អសម្រាប់អ្នកម្តាយដែលបំបៅដោះកូន ✨🌻លទ្ធផលល្អបំផុត៖ មួយកញ្ចប់លាបលើមុខស្អាតមុនពេលចូលគេង វានឹងស្ងួតក្រោយ 5 នាទី នោះអ្នកនឹងឃើញលទ្ធផលគួរអោយស្រលាញ់ ទោះបីជាប្រើលើកដំបូងក៏ដោយ។ 🌸អ្នកតែងតែអាចអនុវត្តវាបានគ្រប់ពេលវេលា អាស្រ័យលើតម្រូវការរបស់អ្នក។  ទុកក្នុងទូរទឹកកក។</p>',
+             price: 4
+        },
+{
+            id: 25,
+            name: ' Cherry Blossom Serum',
+            images: ['https://i.pinimg.com/474x/be/9e/86/be9e86a2970122617ab2ca344956fa46.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>🍒 Cherry Blossom Serum Sleeping Mask By Tey 🍒<br>ល្អទាំងរូបរាងទាំងស្តង់ដារ Formula Korean 🇰🇷<br>ធានាគុណភាពមិនអោយអតិថិជនខកចិត្តទេចា😍</p>',
+             price: 5
+        },
+{
+            id: 26,
+            name: 'Spray បណ្ដុះសក់ Yanin Hair Tonic',
+            images: ['https://i.pinimg.com/474x/91/90/30/91903061325a585154b5710e60609d6f.jpg'],
+            compare: 14,
+            discount: 0.5,
+            stock: true,
+            category: 'សក់',
+            description: '<p>🌷Spray បណ្ដុះសក់ Yanin Hair Tonic ជួយព្យាបាលសក់ជ្រុះ កើតអង្កែរ សក់មិនដុះ​ សក់ឆេះ ក្បាលទំពែក នឹងគ្រប់បញ្ហាសក់ខូច<br>🌸សក់ជ្រុះ មិនដុះកូនសក់ថ្មី<br>🌸ឆក ដោយសារជ្រុះសក់់<br>🌸សក់សំពោង គ្មានសំណើម មិនរលាល់រលោង<br>🌸សក់មិនងាយលូតវែង<br>🌸រមាស់ស្បែកក្បាល<br>🌸ស្បែកក្បាលអង្គែរ<br>🌸សក់ដាច់<br>ប្រើដោយជឿជាក់ និងមានទំនុកចិត្ត👌</p>',
+             price: 7
+        },
+        {
+            id: 27,
+            name: 'Candy Bella Cushion',
+            images: ['https://i.pinimg.com/474x/f0/dc/b3/f0dcb3bc2d96658876966f51b965dfa3.jpg', 'https://i.pinimg.com/474x/e6/f3/6f/e6f36fbf8da03039f35b48da8531c814.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨Candy Bella Cushion ✨ជាប្រភេទខូលិន​ ជួយបំបាត់ខ្លាញ់នៅលេីស្បែកមុខ​ និងធ្វេីអោយស្បែកមុខ​ រលាងម៉ត់​ មិនស្ទះរន្ធញេីស​ ធ្វេីអោយស្បែកមុខទន់រលាង​ បែបធម្មជាតិ​ ទប់Make up បានយូរ មិនងាយរលុប​ ចេញពីស្បែកមុខ​ កាន់តែប្រេីជាមួយនិងCushion Candy Bella ស្បែកមុខកាន់តែមាននូវសុខភាពល្អចេញមកពីខាងក្នុងពិតៗតែម្តង😊<br>✨ប្រេីបានទាំងបុរស👱​ និង​ ស្រ្តី👧</p>',
+             price: 5
+        },
+{
+            id: 28,
+            name: 'MZV Ari Cushion BB Cream',
+            images: ['https://i.pinimg.com/474x/29/20/05/2920054d8e7ecaae1df91e187dab6150.jpg', 'https://i.pinimg.com/474x/61/97/54/6197540d1c281395066f9cc2dfc12807.jpg', 'https://i.pinimg.com/474x/2c/35/e8/2c35e8bfa860772160e4366df72a74c8.jpg', 'https://i.pinimg.com/474x/5c/d1/33/5cd1339452a6028428f5c2bca4133db7.jpg', 'https://i.pinimg.com/474x/44/62/7a/44627a4547569fd949508cf2a17ef7ed.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>MZV Ari Cushion BB Cream✨ជាប្រភេទ​ Cushion <br>ជួយបិទបាំងស្នាម​គ្រប់ប្រភេទ​    ទប់ជាតិខ្លាញ់​ ផ្តល់សំណេីម​ខ្ពស់💦 ការពារកម្តៅថ្ងៃ​⛅️ ធុននិងទឹក​ ញេីស😊សាច់ម្សៅវិញម៉ត់​ ល្អិតតូចខ្លាំង​ សាបចូលស្បែកមុខបានយ៉ាងលឿន​ មិនមានលក្ខណៈ​កកដុំៗ​ មិនស្អិត​ សាព្រុសលេីស្បែកមុខ​ ​ជាពិសេស​ ជាប់បាន24 ម៉ោង⏰​ មិនងាយ​រលុប​ ធ្វេីអោយស្បែកមុខភ្លឺ​ ស្រស់ថ្លាមានសុខភាពល្អ​ ពេលដែលបានប្រេី​😊ស្បែក​មុខស្តេីង​ ប៉ុន​ណាក៏អាចប្រេីបាន​ដែរបងៗ😍<br>✨ប្រេីបានទាំងបុរស👱​ និងស្រ្តី👧</p>',
+             price: 8
+        },
+{
+            id: 29,
+            name: 'Blush ',
+            images: ['https://i.pinimg.com/474x/c1/d5/c4/c1d5c45039133108395a7ade218989da.jpg', 'https://i.pinimg.com/474x/ed/40/06/ed4006a70c422aaf964258d4c35e9a72.jpg', 'https://i.pinimg.com/736x/43/eb/25/43eb252fe416080f86c30bf563ae997f.jpg', 'https://i.pinimg.com/474x/35/c0/13/35c013aabc2330109aadad690e3c989d.jpg'],
+            colors: [{
+                    name: '1', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/474x/ed/40/06/ed4006a70c422aaf964258d4c35e9a72.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '2', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/43/eb/25/43eb252fe416080f86c30bf563ae997f.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '3', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/474x/35/c0/13/35c013aabc2330109aadad690e3c989d.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨Blush មានបីពណ៌​ ឈូក​ ទឹកក្រូច​ និង​ ក្រហម​ សាកសម​បំផុតសំរាប់យុវនារីសម័យបច្ចុប្បន្ន​ មានតែមួយប្រអប់​ ប្រេីបានទាំង ថ្ពាល់​ ត្របកភ្នែក​ បបូរមាត់និង​ ចម្រុះ​ មានតែមួយប្រអប់មិនចាំបាច់ចំណាយលុយទិញច្រេីនមុខ✨😊</p>',
+        },
+{
+            id: 30,
+            name: 'ម៉ាសខូ​លិនជិន',
+            images: ['https://i.pinimg.com/474x/3e/4e/da/3e4eda88cc6c3a60f19043cb472b5a92.jpg', 'https://i.pinimg.com/474x/ac/3f/52/ac3f52a34d559ecd3799fc9c32456d1a.jpg', 'https://i.pinimg.com/736x/18/c9/37/18c937b38453169c121b05d8ddd44bd7.jpg', 'https://i.pinimg.com/474x/a6/41/30/a64130227a473591aecdd8a4af076802.jpg', 'https://i.pinimg.com/736x/9e/54/a1/9e54a1abc2f99f386500addbc6042168.jpg', 'https://i.pinimg.com/474x/a7/26/9d/a7269db46623e24f8206c25916b4ee40.jpg', 'https://i.pinimg.com/736x/31/c2/e3/31c2e3d7130ad35bf255fa307d86893f.jpg'],
+            colors: [{
+                    name: 'ប្រអប់តូច', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/9e/54/a1/9e54a1abc2f99f386500addbc6042168.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: 'ប្រអប់ធំ', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/736x/31/c2/e3/31c2e3d7130ad35bf255fa307d86893f.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨ម៉ាសខូ​លិនជិន​ សំបូរទៅដោយវីតាមីន🌸ជាច្រេីនប្រភេទ​ ដែរជួយអោយស្បែកមុខ​ ⭐️សរ​ ទន់​ ភ្លឺ​ ម៉ត់រលាងចេញពីខាងក្នុង​ 😍ជំនាញខ្លាំងទៅលេីបញ្ហាស្បែកមុខជ្រីវជ្រួយ​ ⭐️ជួយបន្តឹងស្បែកមុខ​ អោយក្មេងជានិរន្ត​ ⛅️បង្កេីតនូវកេាសិកាថ្មី​ៗ​ នៅលេីស្បែកមុន​ 💦ផ្តល់សំណេីមខ្ពស់​ មិនថាស្បែកមុខស្តេីងបែបណាក៏អាប្រេីជាមួយនិងម៉ាស​ ខូលិនជិននេះបានដែរ​🌸<br>😘ជាពិសេសនោះគឺចំណាយពេលវេលាតិចមិនដល់⏰1នាទីផង​ បងនិងទទួលបាននូវស្បែកមុខភ្លឺ​ សរម៉ត់រលាងពីខាងក្នុងតែម្តង😊✨</p>',
+        },
+        {
+            id: 31,
+            name: 'ដង្កៀបសក់សរសៃរសូត្រ',
+            images: ['https://i.pinimg.com/736x/96/d9/f2/96d9f2d380895c6dae319d9e840da5a5.jpg', 'https://i.pinimg.com/736x/f6/9e/6b/f69e6b5f139acdafc66a354853153b93.jpg', 'https://i.pinimg.com/736x/f8/2c/a8/f82ca8f79829eed4c7d1ede63bc171f8.jpg', 'https://i.pinimg.com/736x/90/e0/f4/90e0f4c20b907bf998f43adcb34562a0.jpg'],
+            colors: [{
+                    name: 'ត្រង់', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/90/e0/f4/90e0f4c20b907bf998f43adcb34562a0.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: 'រួញខ្លី', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/96/d9/f2/96d9f2d380895c6dae319d9e840da5a5.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: 'រួញវែង', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/f6/9e/6b/f69e6b5f139acdafc66a354853153b93.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: 'មូលទឹករលក', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/f8/2c/a8/f82ca8f79829eed4c7d1ede63bc171f8.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p>ដង្កៀបសក់សរសៃរសូត្រ ត្រង់ រួញខ្លី រួញវែង និងមូលទឹករលកមានស្តុកណាបងៗ កម្មង់ភ្លាមបានភ្លាម</p>',
+        },
+{
+            id: 32,
+            name: 'មួកសក់សរសៃរសូត្រត្រង់',
+            images: ['https://i.pinimg.com/736x/be/4c/ee/be4cee52c079a00813665d0a8aa22be2.jpg', 'https://i.pinimg.com/474x/49/91/ce/4991ceb691fd039b45a124b504f9c963.jpg', 'https://i.pinimg.com/474x/7c/01/fe/7c01fee373d4f20c8c5a94e405d889e6.jpg', 'https://i.pinimg.com/736x/c8/e5/79/c8e579c5e90ba13f379fd8d8f9f4d0ee.jpg'],
+            colors: [{
+                    name: '1', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/736x/be/4c/ee/be4cee52c079a00813665d0a8aa22be2.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                },
+{
+                    name: '2', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/49/91/ce/4991ceb691fd039b45a124b504f9c963.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                },
+{
+                    name: '3', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/7c/01/fe/7c01fee373d4f20c8c5a94e405d889e6.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                },
+{
+                    name: '4', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/736x/c8/e5/79/c8e579c5e90ba13f379fd8d8f9f4d0ee.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p>✨មួកសក់សរសៃរសូត្រត្រង់ មានមួកពណ៌៌ ខ្មៅនិង ត្នោតចាស់ សរៃសរធានាជូនដូចពិតៗតែម្តង ចូលឆ្នាំខ្មែរនេះមានមួកនេះមួយលើកសម្រស់ហើយមិនខ្មៅមុខទៀត ចង់ដើរលេងប៉ុនណាក៏មុខនៅតែសរ ម៉ត់ដែរ😊</p>',
+        },
+{
+            id: 33,
+            name: 'សក់បន្ទះសរសៃសូត្រ​ សក់មូលរួញ',
+            images: ['https://i.pinimg.com/736x/5a/f2/05/5af205b038c41d0c8adb3b7fdbe15cfd.jpg', 'https://i.pinimg.com/474x/ba/2f/dd/ba2fddfed7d74c7431d321dfdbf314da.jpg', 'https://i.pinimg.com/736x/be/3d/52/be3d5208e3cc50b17ac9f3dba28ca3d2.jpg', 'https://i.pinimg.com/736x/f9/c4/0d/f9c40dedfc125f66553806d310b17fcc.jpg'],
+            colors: [{
+                    name: '1', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/5a/f2/05/5af205b038c41d0c8adb3b7fdbe15cfd.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '2', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/474x/ba/2f/dd/ba2fddfed7d74c7431d321dfdbf314da.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '3', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/be/3d/52/be3d5208e3cc50b17ac9f3dba28ca3d2.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '4', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/f9/c4/0d/f9c40dedfc125f66553806d310b17fcc.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p>សក់បន្ទះសរសៃសូត្រ​ សក់មូលរួញ ពាក់លេីសក់ក្បាល​ជាប់ល្អ​ មិនធ្ងន់ក្បាល​ សរសៃសក់មេីលទៅដូចពិត100% ស្អាតខ្លាំង​ ✨<br>ប្រវែង60cm<br>តម្លៃ5$​ទេបងៗអេីយរកណាបានសក់ស្អាតហេីយតម្លៃធូរបែបនិង​👸</p>',
+        },
+{
+            id: 34,
+            name: 'សក់បន្ទះសរសៃសូត្រ​',
+            images: ['https://i.pinimg.com/474x/d4/66/b4/d466b40e6e58c94982c5bdb6ca34229d.jpg', 'https://i.pinimg.com/474x/b2/39/15/b23915566c6997676ec69463194df4c1.jpg', 'https://i.pinimg.com/474x/41/05/a4/4105a454e0823dd9baca99f86ed0d5fb.jpg', 'https://i.pinimg.com/736x/33/5e/d9/335ed98222b24b47df9ca7e4a87a1ac0.jpg'],
+            colors: [{
+                    name: '1', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/474x/d4/66/b4/d466b40e6e58c94982c5bdb6ca34229d.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '2', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/474x/b2/39/15/b23915566c6997676ec69463194df4c1.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '3', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/474x/41/05/a4/4105a454e0823dd9baca99f86ed0d5fb.jpg', 
+                    stock: false,
+                    compare: 10,
+                    discount: 0.5,
+                },
+{
+                    name: '4', 
+                     price: 5,
+                    image: 'https://i.pinimg.com/736x/33/5e/d9/335ed98222b24b47df9ca7e4a87a1ac0.jpg', 
+                    stock: true,
+                    compare: 10,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p>✨សក់បន្ទះសរសៃសូត្រ​ សក់ត្រង់​ ពាក់លេីសក់ក្បាល​ជាប់ល្អ​ មិនធ្ងន់ក្បាល​ សរសៃសក់មេីលទៅដូចពិត100% ស្អាតខ្លាំង​ ✨<br>☺️ប្រវែង60cm<br>តម្លៃ5$​ទេបងៗអេីយរកណាបានសក់ស្អាតហេីយតម្លៃធូរបែបនិង​👸</p>',
+        },
+{
+            id: 35,
+            name: 'គូល័រគូរត្របកភ្នែក',
+            images: ['https://i.pinimg.com/474x/35/87/ad/3587ad9d1dddb1ffca33eb0dc7eb45d3.jpg', 'https://i.pinimg.com/736x/b5/76/1d/b5761d807f5f59cc020728d589fb9b42.jpg', 'https://i.pinimg.com/474x/80/d5/4b/80d54b249071f11792f4f9aefdc3fa90.jpg', 'https://i.pinimg.com/474x/0f/42/71/0f4271ea30afaf5926581f1b3545013a.jpg', 'https://i.pinimg.com/474x/b6/c7/b1/b6c7b15c13fdf7e597934d318549e9a2.jpg', 'https://i.pinimg.com/736x/c9/9c/ed/c99cedc675b7ccd350b54b7d74335235.jpg'],
+            colors: [{
+                    name: '1', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/35/87/ad/3587ad9d1dddb1ffca33eb0dc7eb45d3.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '2', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/736x/b5/76/1d/b5761d807f5f59cc020728d589fb9b42.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '3', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/80/d5/4b/80d54b249071f11792f4f9aefdc3fa90.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '4', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/0f/42/71/0f4271ea30afaf5926581f1b3545013a.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '5', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/b6/c7/b1/b6c7b15c13fdf7e597934d318549e9a2.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: '6', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/736x/c9/9c/ed/c99cedc675b7ccd350b54b7d74335235.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨គូល័រគូរត្របកភ្នែក ពណ័ដុតល្អ ជាប់បានយូរ ងាយស្រួលដាក់តាមខ្លួន ពណ័ស្អាតខ្លាំង✨</p>',
+        },
+{
+            id: 36,
+            name: 'ប៉ុងសាច់ខលិនជិន',
+            images: ['https://i.pinimg.com/736x/11/f2/6f/11f26fb0c4da8ded5ad63e57d6531be6.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨ប៉ុងសាច់ខលិនជិន តប់ចូលមុខបានយ៉ាងល្អ ប៉ុងមិនសុីសាច់ម្សៅ បានប្រើហើយស្បែកឡើងម៉ត់ លាហើយស្បែកមុខដែរធ្លាប់់តែកក់ម្សៅ ពីកាលមុន មានតែពាក្យថាមុខ ម៉ត់រលាង 😊</p>',
+             price: 3
+        },
+{
+            id: 37,
+            name: 'ច្រាសសិតរោម',
+            images: ['https://i.pinimg.com/736x/d1/d9/fe/d1d9fee59662cbe01835f56bd4e3e9d6.jpg', 'https://i.pinimg.com/474x/5c/58/eb/5c58eb35b247fece93b8443931a0f7cd.jpg'],
+            colors: [{
+                    name: 'ឈូក', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/736x/d1/d9/fe/d1d9fee59662cbe01835f56bd4e3e9d6.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: 'ទឹកក្រូច', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/5c/58/eb/5c58eb35b247fece93b8443931a0f7cd.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p>ធុញនិងរោគកូនជ្រុះពេញដីមែនទេ អាចមកសាកប្រើជាមួយ និងច្រាសសិតរោមនេះបានសិតបានស្អាតល្អ ដូចម៉ាស្សាអោយកូនចឹង ធ្វើអោយគ្នាមានអារម្មណ៍ស្រួលខ្លួនពេលដែរសិតម្តងៗ គុណភាពល្អទៀតរកណាបាន😘✨</p>',
+        },
+{
+            id: 38,
+            name: 'ឡេវេទមន្ត​',
+            images: ['https://i.pinimg.com/736x/75/51/ae/7551ae938dd9e3df6d5c1734a1dab82b.jpg', 'https://i.pinimg.com/474x/82/98/13/829813fc58b242654cb6407ff2594cce.jpg', 'https://i.pinimg.com/474x/d3/0f/61/d30f61c8646c597aba5ac375ae359016.jpg', 'https://i.pinimg.com/474x/bf/57/e0/bf57e0a81c33b681cc3c5df6675c451a.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>☁️លាបភ្លាមសរភ្លាម​ លាបភ្លាមសរភ្លាម​👩 ជាមួយនិងឡេវេទមន្ត​ 💫😊សំរាប់បងៗស្បែកខ្មៅស្រអាប់ប៉ុន​ ណាអោយតែបានលាបឡេវេទមន្ត​ ត្រឹមតែ1នាទី​ ⏰ប៉ុនណ្ណោះផ្លាស់ប្អូនពីមនុស្សម្នាក់ទៅមនុស្សម្នាក់ទៀតបានយ៉ាង​ ងាយ​ៗ😎សម័យឥឡូវ​ ខ្មៅប៉ុនណា​ ក៏មានសង្ឃឹម​ ដែរ😚ជាពិសេស​ ជាមួយនិង✨ឡេវេទមន្តមួយនេះសំបូលទៅដោយសារធាតុចិញ្ចិតជាច្រេីន​មុខ​💦 ផ្តល់សំណេីមខ្ពស់​ ធន់និងទឹក​ និងញេីស​ កាន់តែលាបកាន់តែសរ​ទៅសរទៅ​ កាន់បន្ថយស្បែកខ្មៅស្រអាប់បានយ៉ាងមានប្រសិទ្ធិភាព​✨☀️ការពារកំដៅថ្ងៃបានយ៉ាងល្អ​ ⛅️<br>👩👱ប្រេីបានទាំងបុរស​ និងស្រី​ត✨</p>',
+             price: 5
+        },
+{
+            id: 39,
+            name: 'ម៉ាសពពុះ',
+            images: ['https://i.pinimg.com/474x/62/03/66/620366b998f4593b29e45ec1e51c5853.jpg', 'https://i.pinimg.com/736x/54/4e/ce/544ecea3eb9a8f379ca8224543ef8742.jpg', 'https://i.pinimg.com/474x/d3/a7/d4/d3a7d4f6ba545de445687bd901974e79.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>ម៉ាសពពុះជួយបឺតយកមុនក្បាលខ្មៅ មុនសាច់ មុនអង្កាម  ជាពិសេសបឺតយកសារជាតិពុលចេញពីក្នុងស្រទាប់ស្បែកមុខ បានយ៉ាងមានប្រសិទ្ធិ ធ្វើអោយស្បែកមុខសរទន់ភ្លឺរលាងត្រឹមតែរយៈពេល5min⏰😊✨</p>',
+             price: 5
+        },
+{
+            id: 40,
+            name: 'សេរ៉ូវេទមន្ត​',
+            images: ['https://i.pinimg.com/736x/e9/2c/8d/e92c8db04ba5c8e50e745e8c49fec8b9.jpg', 'https://i.pinimg.com/736x/b7/fb/a1/b7fba1cbeb78e54d9f9d15330656c86a.jpg', 'https://i.pinimg.com/736x/0f/97/ec/0f97ecc71c87d8669b813e034655dd06.jpg', 'https://i.pinimg.com/736x/4c/fc/22/4cfc22d39a2baafff349fa94c18fc532.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨សេរ៉ូវេទមន្ត​ ជំនាញខ្លាំងទៅលេីបញ្ហាស្នាម​ ជាំ​ អាចម៍រុយ​ ផ្តល់សំណេីម​ វីតាមីននៅលេីស្បែកមុខបានយ៉ាងមានប្រសិទ្ធភាព​ 💦<br>🌺🍀<br>✨ផ្តល់សំណេីមដល់ស្បែកមុខ បំបាត់ស្លាកស្នាម<br>លើស្បែកមុខយ៉ាងពូកែសាកសិទ្ធិ👍🏻<br>✨បំប៉នស្បែកឲ្យសភ្លឺថ្លាពីខាងក្នុងស្បែក.<br>✨ជួយបណ្តុះកោសិកាស្បែកមុខ<br>✨បំប៉នផ្ទៃមុខឲ្យទន់រលោងម៉ត់ <br>✨ទប់ស្កាត់ជាតិខ្លាញ់ និង​កំចាត់មេរោគបាត់តេរីដែលបណ្តាលឲ្យកេីតមានមុន <br>✨បណ្តឹងស្បែកមុខ <br>✨ជួយទប់ស្កាត់ការកកើតនៃមុន<br><br>ងាយស្រួលក្នុងការប្រេីប្រាស់តម្លៃសមរម្យ​ គុណភាពខ្ពស់😊✨🎉<br>💧ចំណុះ30ml<br>🌼ប្រេីបានទាំងបុរស​ និងស្រ្តី</p>',
+             price: 8
+        },
+{
+            id: 41,
+            name: 'ម្សៅហុយFV​ Powder',
+            images: ['https://i.pinimg.com/474x/ac/01/f0/ac01f0b2b85b24322cbeeae847002102.jpg', 'https://i.pinimg.com/474x/24/ab/3a/24ab3ab6dbbafdcd7508384f1eb13901.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: false,
+            category: 'មុខ',
+            description: '<p>✨ម្សៅហុយFV​ Powder ជាប្រភេទម្សៅហ៊ុយដែរមានស្តង់ដារខ្ពស់ទៅលេីគុណភាព​🌸ទប់ខ្លាញ់ ទប់ញើស ធន់នឹងទឹក មកដល់ហើយ មាន 2 ពណ៍ សម្រាប់តម្រូវតាមពណ៍ស្បែក ♥️01 និង 02  ប្រើម្សៅហុយ នេះមើលទៅស្បែកមុខធម្មជាតិ អត់ក្រាស់ៗខ្លាំងទេ ប្រើទៅមានប្រសិទ្ធភាពខ្ពស់​ និងធ្វេីស្បែកមុខមានសុខភាពល្អទៅមិនងាយឡេីងររាទិ៍​ និងប្រតិកម្មផ្សេងៗ បានមានសុវត្ថិភាព​😚</p>',
+             price: 8
+        },
+{
+            id: 42,
+            name: 'កាស​Bluetooth P47',
+            images: ['https://i.pinimg.com/736x/4d/80/50/4d8050d7655c420452e8e9f879029078.jpg', 'https://i.pinimg.com/474x/3f/4c/c6/3f4cc6ca5f1fcfbba80946c95f5ee2a1.jpg', 'https://i.pinimg.com/736x/b6/19/d0/b619d052fc7b8819387305604b639fde.jpg', 'https://i.pinimg.com/474x/93/07/ad/9307ad4bb50b6231cbd68c2d1d107d6b.jpg'],
+            colors: [{
+                    name: 'ឈូក', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/736x/4d/80/50/4d8050d7655c420452e8e9f879029078.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                },
+{
+                    name: 'ខ្មៅ', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/474x/3f/4c/c6/3f4cc6ca5f1fcfbba80946c95f5ee2a1.jpg', 
+                    stock: false,
+                    compare: 14,
+                    discount: 0.5,
+                },
+{
+                    name: 'ស្វាយ', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/736x/b6/19/d0/b619d052fc7b8819387305604b639fde.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                },
+{
+                    name: 'ទឹកសមុទ្រ', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/474x/93/07/ad/9307ad4bb50b6231cbd68c2d1d107d6b.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p>🎧កាស​Bluetooth P47 ចូលស្តុកវិញហេីយណាបងៗ​ <br> 🎧ប្រេីបានទាំងទូរស័ព្ទ​ Laptop  និង Computer✨<br>🎶 ផលិតផលសុទ្ធ Original Product Brand ល្បី<br>🎶 ប្រើបានទាំងបុរសនិងនារី សាកសម ថ្លៃថ្នូរ ជាពិសេសគឺរូបរាងCute​ និងគួរអោយចង់ប្រេី​ កាន់តែប្រេីកាន់តែ​ មានអារម្មណ៍ល្អ​ ជាមួយនិងភាពច្នៃប្រឌិតជំនាន់ថ្មី​2022✨☺️<br>🎶 សម្លេងបុកខ្លាំង មិនឈឺត្រចៀក កាន់ថ្មយូរបំផុត<br>🎶  ធានាគុណភាពល្អដូចរូប​ 100%<br>🎶 ងាយស្រួលភ្ជាប់ជាមួយទូរស័ព្ទ iOS, Tablet &amp; Android <br>🎶សាកថ្មល្បឿនលឿន និងកាន់ថ្មបានយូរ<br>🛒​ កម្មង់​ឥឡូវ​នេះ​ នឹង​ទទួល​បាន​តម្លៃ​ពិសេស<br>🚚 ដឹកជញ្ជូន 25 ខេត្ត/ក្រុង</p>',
+        },
+{
+            id: 43,
+            name: 'Valarie End White Body Cream ',
+            images: ['https://i.pinimg.com/474x/37/c3/c9/37c3c9f450c4170c755b77c0f3924030.jpg', 'https://i.pinimg.com/474x/71/d1/05/71d105aa9307df505026b5e609ffae56.jpg', 'https://i.pinimg.com/474x/6d/cf/e7/6dcfe7867a62d9b34f71bb289cfe4ae5.jpg', 'https://i.pinimg.com/474x/68/ac/ec/68acecad32dcb3aab6ef0a2d2abed113.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>💁‍♂️ខ្មៅកម្រិតណាក៏ជួយបានដែលបាទកុំលេងសើចជាមួយឡេ💗Valarie End White Body Cream 💗អោយសោះ😜ធានាជូនជាប្រភេទឡេសុទ្ធតែលាបទៅសរសាហាវ​បងៗ​មិនថាស្បែកស្តីប៉ុនណាក៏អាច​ ប្រេីបានដែរ​ ជាអ្នកឯកទេសព្យាបាទស្បែក​ បានយ៉ាងមានប្រសិទ្ធីភាពណាបងៗ☺️🍀👉អ្នកកំពុងមានបញ្ហាស្បែកខ្មៅខ្លាំង👉ស្បែកលាបឡេអត់ចូល👉ស្បែកអុចខ្មៅ👉ស្បែកស្ដើង👉ស្បែកស្ងួតគ្មានសំណើម👉ស្បែកមានសង្វា👉ចង់បានស្បែកភ្លឺថ្លាសរបែបមានស្ដង់ដារសរម៉ត់រលោង #Valarie End White Body Cream អាចជួយបាន😍💁ចាប់អារម្មណ៍លក់inbox💌ចំណាយ45$ក្លាយជាតំណាង☎️</p>',
+             price: 5
+        },
+{
+            id: 44,
+            name: 'ជែលអប់ដៃអោយស្រលូន',
+            images: ['https://i.pinimg.com/736x/b4/ee/53/b4ee53bd810c5481f0c10ab3b94ef640.jpg', 'https://i.pinimg.com/736x/b5/3f/76/b53f76639f6f8a53ecb3ad8742f734e0.jpg', 'https://i.pinimg.com/474x/08/ea/22/08ea22f91a6c4820c01f3f57fe43c806.jpg', 'https://i.pinimg.com/736x/08/83/dc/0883dc472c4d4442609e508245d02473.jpg'],
+            compare: 8,
+            discount: 0.5,
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>✨☺️ជែលអប់ដៃអោយស្រលូនBrand YAQINUOចូលស្តុកហេីយបង🌸✨<br><br> 🌸ការពារស្បែក៖ ផ្តល់សំណើម ចាក់សោសំណើម កាត់បន្ថយភាពស្ងួត និងស្នាមជ្រួញ ធ្វើឱ្យដៃមើលទៅភ្លឺស្រលូនស្អាត។<br><br>🌸ធ្វេីអោយស្បែកភ្លឺថ្លា : ផ្តល់សារធាតុចិញ្ចឹមយ៉ាងជ្រៅ ទន់ភ្លន់ ទទួលបានជាតិទឹកទ្វេដង មានសំណើម ទន់រលោង ធ្វើអោយស្បែកភ្លឺថ្លា។<br><br> 🌸Moisturizer: Spa grade ធ្វើអោយស្បែកស និងទន់ ផ្តល់សំណើម និងផ្តល់អោយ  សំណើម, ទន់ភ្លន់។ <br><br> 🌸មេតាបូលីសៈ សារធាតុធ្វើឱ្យភ្លឺបីដង ធ្វើឱ្យពន្លឺទ្វេដង។  លាបដៃពណ៌លឿងខ្មៅ និងដៃពណ៌សទន់ភ្លន់ និងបង្កើនល្បឿនមេតាប៉ូលីស។<br><br> 💦🌻បន្ថែមទឹក៖ ម៉ូលេគុលតូចៗនៃCollagenទៅដល់ផ្នែកខាងក្រោមនៃសាច់ដុំដើម្បីចិញ្ចឹម។  ហើយបន្ថែមស្រទាប់ទឹកដោយស្រទាប់  ម៉ូលេគុលទំហំមធ្យម បន្ថែមទឹក ចិញ្ចឹម និងផ្តល់សំណើមដល់ស្បែក។</p>',
+             price: 4
+        },
+{
+            id: 45,
+            name: 'Pibamy',
+            images: ['https://i.pinimg.com/474x/ad/06/e9/ad06e90d2ad8701b39a366d5893d83c9.jpg', 'https://i.pinimg.com/736x/7e/57/10/7e5710830d36d0b6d9c20c13db19b0c6.jpg', 'https://i.pinimg.com/736x/2e/79/df/2e79df268f58e64651ffc69b383ab724.jpg', 'https://i.pinimg.com/474x/f0/ba/27/f0ba27c0e409bf244b69261f28648616.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>✨Pibamy ចូលស្តុកហេីយបងៗ✨😘<br>🌸ជម្រះស្នាមមុនជាំខ្មៅ <br>🌸ជឿជាក់លើខ្លួន 100%<br>🌸រលើបរលោង <br>🌸 ក្មេងវ័យ, ដូចអាយុ ២០<br><br>🌿💎ជាមួយសារធាតុផ្សំសំខានគឺ ALPHA ARBUTIN - បានចម្រាញ់ចេញអំពីដើម Bearberry, គឺជាសារធាតុផ្សំមិនអាចខ្វះក្នុងការព្យាបាលស្នាមជាំ, អាចម៍រុយ, រារាំងភាពជរាស្បែក, បង្កើនសារធាតុពណ៌, កាត់បន្ថយស្ថានភាពជាំស្បែក, នាំមកនូវប្រព័ន្ធស្បែកស្រស់ស្អាត, ពោពេញទៅដោយភាពរស់រវើក...🌸🌿✨</p>',
+             price: 5
+        },
+{
+            id: 46,
+            name: 'ម៉ាសុីនក្រៀបសក់',
+            images: ['https://i.pinimg.com/736x/f6/ed/80/f6ed806a969b64a020d816fa556ef1d9.jpg', 'https://i.pinimg.com/736x/9b/d3/08/9bd30836b9f0ebdb0143b89612d69f1f.jpg', 'https://i.pinimg.com/736x/a5/c4/6e/a5c46e3277084f05cd1aba1ffe2c87ac.jpg', 'https://i.pinimg.com/736x/19/78/05/197805e702942d10e942a3ec26a75db6.jpg'],
+            colors: [{
+                    name: 'ឈូក', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/736x/9b/d3/08/9bd30836b9f0ebdb0143b89612d69f1f.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                },
+{
+                    name: 'ខ្មៅ', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/736x/a5/c4/6e/a5c46e3277084f05cd1aba1ffe2c87ac.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                },
+{
+                    name: 'បៃតង', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/736x/19/78/05/197805e702942d10e942a3ec26a75db6.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p>✨ម៉ាសុីនក្រៀបសក់ម៉ូតថ្មីរបស់ប្រទេសថៃ✨🌸✨កម្លាំងភ្លេីង60wសុីភ្លេីងតិចខ្លាំង💖✨កំដៅភ្លេីងដល់220c ក្រៀបហេីយមិនធ្វេីអោយសក់បែកចុងដោយសារតែម៉ាសុីនផលិតតាមស្តង់ដាតម្រូងគ្រប់សរសៃរសក់✨🌻✨អាចសរេកំដៅបាន☺️✨មិនធ្វេីអោយសក់ឆេះ​ និងខូចដោយសារកៀបទេបងៗ💖🌸មានបីពណ័​ ស​, ខ្មៅ​ និងឈូក✨🌸🌸កម្មន្តភ្លាមបានភ្លាមចូលស្តុកហេីយបងៗទំនិញមានកំណត់ណាបងៗ​ មកមុនបានមុន✨😊</p>',
+        },{
+            id: 47,
+            name: 'ស្រា្កប់អំពិលទុ់',
+            images: ['https://i.pinimg.com/474x/05/1c/af/051caf97c8185e9d118d340dfe8e6afe.jpg'],
+            compare: 12,
+            discount: 0.5,
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p></p>',
+             price: 6
+        },
+{
+            id: 48,
+            name: 'ប្រេងក្រអូប',
+            images: ['https://i.pinimg.com/474x/23/e8/25/23e82533ef1843ecfa65f8c059e1c475.jpg'],
+            compare: 12,
+            discount: 0.5,
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>ក្រអូបជាប់បានយូរ24ម៉ោង</p>',
+             price: 6
+        },
+{
+            id: 49,
+            name: 'សរសៃក្រដាស',
+            images: ['https://i.pinimg.com/474x/b6/d1/6b/b6d16b750c3bb09d0782dd1758a7bc9f.jpg'],
+            compare: 4,
+            discount: 0.5,
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p></p>',
+             price: 2
+        },
+{
+            id: 50,
+            name: 'ស្នោរពពុះ',
+            images: ['https://i.pinimg.com/474x/44/f9/00/44f90024da3b569140b73e7095a34797.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p>ចំំណុះ30g</p>',
+             price: 3
+        },
+{
+            id: 51,
+            name: 'ឈុតជក់ផាត់មុខ',
+            images: ['https://i.pinimg.com/736x/92/09/2b/92092bcb2945017919355d55c8c7d247.jpg'],
+            compare: 14,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>ជក់ទន់ល្អ ផាត់បានស្អាត</p>',
+             price: 7
+        },
+{
+            id: 52,
+            name: 'ម៉ាសមាស',
+            images: ['https://i.pinimg.com/474x/d3/87/c6/d387c6e09b0ce214d6a0dd73ff381aac.jpg'],
+            compare: 12,
+            discount: 0.5,
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p>&lt;បំប៉នស្បែកមុខ &lt;ព្យាបាល &lt;បឺតមុនបញ្ចេញមុនខ្ទុះ មុនកប់ &lt;កាត់បន្ថយរោល ក្រហម &lt;  រលាក លេីស្បែកមុខ ✨ ស្បែកមុខ ស និងភ្លឺថ្លាទន់រលោង🍯🥰 </p>',
+             price: 6
+        },
+{
+            id: 53,
+            name: 'Pink Gold Mask',
+            images: ['https://i.pinimg.com/474x/29/01/b4/2901b400652e4304458b94a031adf024.jpg'],
+            compare: 20,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>•ព្យាបាលស្នាមអុជខ្មៅនៅលើមុខ អាចម៍រុយ•បំបាត់មុនសាច់ មុនក្បាលខ្មៅ ស្នាម•ជួយបំបាត់សរសៃក្រហមដោយសារប្រើផលិតផលខុស•ជួយបន្តឹងស្បែកមុខស្នាមជ្រាវជ្រាញ់និងធ្វើអោយក្មេងជាងវ័យ•ទោះប្រើច្រើនក៏មិនបាច់ភ័យថាស្តើងស្បែកមុខឡើយធម្មជាតិ💯 កាន់តែប្រើស្បែកមុខកាន់តែរលោង</p>',
+             price: 10
+        },
+{
+            id: 54,
+            name: 'ឡេសុទ្ធថៃ',
+            images: ['https://i.pinimg.com/474x/b2/de/10/b2de10ae50ef5b145b5ae198e4b4b302.jpg', 'https://i.pinimg.com/474x/35/16/eb/3516eb7deccf73fc2f8635b6735491ab.jpg', 'https://i.pinimg.com/474x/12/0b/f2/120bf273f948b074ab995ed1def5765a.jpg'],
+            colors: [{
+                    name: 'Gluta Collagen', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/474x/b2/de/10/b2de10ae50ef5b145b5ae198e4b4b302.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                },
+{
+                    name: 'Arbutin Booster', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/474x/35/16/eb/3516eb7deccf73fc2f8635b6735491ab.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                },
+{
+                    name: 'Miki Vitamin', 
+                     price: 7,
+                    image: 'https://i.pinimg.com/474x/12/0b/f2/120bf273f948b074ab995ed1def5765a.jpg', 
+                    stock: true,
+                    compare: 14,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>✨ ធ្វើឲ្យស្បែកស ភ្លឺធម្មជាតិ ដោយប្រើរយះពេលលឿន✨ជួយបំបាតបញ្ហាស្បែកក្រិន ជង្គង់ក្រិន កែងដៃក្រិន ✨ជួយបំបាត់ស្នាមសង្វារ និងស្នាមអុចខ្មៅ✨បំបាត់មុនខ្នង ✨ផ្តល់សំណើមដល់ស្បែកបានខ្ពស់✨សាច់ឡេពណ៌ផ្កាឈូក ក្លិនក្រអូប ✨រលោង ទន់ ជ្រាបចូលលឿន មិនស្អិតស្បែក✨ស្បែកល្អ ល្អខ្លាំងសម្រាប់ស្បែកងាយប្រតិកម្ម ✨លេសុទ្ធ 100% ធានាដោយពេទ្យស្បែកថៃ</p>',
+        },
+{
+            id: 55,
+            name: 'ឡេជប៉ុន',
+            images: ['https://i.pinimg.com/474x/6d/20/7e/6d207e49e738ed54c863303d2c93d48f.jpg', 'https://i.pinimg.com/474x/18/af/c8/18afc8b215dae61209134ef7d70e0672.jpg'],
+            compare: 16,
+            discount: 0.5,
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>ឡេសុទ្ធ គ្មានជាតិកាត់ គ្មានសារធាតុប៉ះពាល់សុខភាពស្បែក ។ សូម្បីអ្នកពរពោះ អ្នកសម្រាលកូន អ្នកបៅដោះកូន ប្រើបានទាំងអស់។ ឆាប់សរ ស្អាត សរបែបកូរ៉េ សរបែបគុណភាព មិនសរកាត់ សរព្រុស សរឡេលាយ ។ SHIROI Gluta Berry Plus Vit C White Body Lotion 🧴🍒🍑🫐✨ ធ្វើឲ្យស្បែកស ភ្លឺធម្មជាតិ ដោយប្រើរយះពេលលឿន✨ជួយបំបាតបញ្ហាស្បែកក្រិន ជង្គង់ក្រិន កែងដៃក្រិន ✨ជួយបំបាត់ស្នាមសង្វារ និងស្នាមអុចខ្មៅ✨បំបាត់មុនខ្នង ✨ផ្តល់សំណើមដល់ស្បែកបានខ្ពស់✨សាច់ឡេពណ៌ផ្កាឈូក ក្លិនក្រអូប ✨រលោង ទន់ ជ្រាបចូលលឿន មិនស្អិតស្បែក✨ស្បែកល្អ ល្អខ្លាំងសម្រាប់ស្បែកងាយប្រតិកម្ម ✨លេសុទ្ធ 100% ធានាដោយពេទ្យស្បែកជប៉ុន 🇯🇵 </p>',
+             price: 8
+        },
+{
+            id: 56,
+            name: 'sticker Thank you',
+            images: ['https://i.pinimg.com/474x/75/75/69/757569fa79b2545ce970f1d57295a003.jpg'],
+            compare: 4,
+            discount: 0.5,
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p>sticker Thank you បិទលេីប្រអប់អីវ៉ាន់តុបតែងអោយកាន់តែមានភាពទាក់ទាញនិង​ ទាន់សម័យកាល💖😊1ដុំមាន500សន្លឹក</p>',
+             price: 2
+        },
+{
+            id: 57,
+            name: 'មួកសំងួតសក់វេទមន្ត',
+            images: ['https://i.pinimg.com/474x/9a/ec/7d/9aec7d68d3455206eee71b42f6712a19.jpg', 'https://i.pinimg.com/474x/3a/6f/e9/3a6fe92ef753173fbe0f94e634b74fe8.jpg', 'https://i.pinimg.com/474x/88/ae/60/88ae60e3d39973eb37c6d15e78e24523.jpg', 'https://i.pinimg.com/736x/a5/73/d3/a573d3694efbe4c3364984fbf1794d56.jpg', 'https://i.pinimg.com/736x/bf/0d/58/bf0d58b8ec756d79d60f6be4b762e928.jpg'],
+            colors: [{
+                    name: 'ឈូក', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/3a/6f/e9/3a6fe92ef753173fbe0f94e634b74fe8.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: 'ក្រហម', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/474x/88/ae/60/88ae60e3d39973eb37c6d15e78e24523.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: 'ទឺកសម្រុទ', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/736x/a5/73/d3/a573d3694efbe4c3364984fbf1794d56.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                },
+{
+                    name: 'លឿង', 
+                     price: 3,
+                    image: 'https://i.pinimg.com/736x/bf/0d/58/bf0d58b8ec756d79d60f6be4b762e928.jpg', 
+                    stock: true,
+                    compare: 6,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'សក់',
+            description: '<p></p>',
+        },
+{
+            id: 58,
+            name: 'កែវក្រឡុងវេទមន្ត',
+            images: ['https://i.pinimg.com/736x/7b/0c/0d/7b0c0d183e8c20ccddd0ee04205da23c.jpg', 'https://i.pinimg.com/474x/7a/72/35/7a72352f98334686b2419e49f5b13d31.jpg', 'https://i.pinimg.com/474x/cd/a6/61/cda661b64426ad6872318e42b5408120.jpg'],
+            colors: [{
+                    name: 'ស', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/7a/72/35/7a72352f98334686b2419e49f5b13d31.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                },
+{
+                    name: 'ត្នោត', 
+                     price: 8,
+                    image: 'https://i.pinimg.com/474x/cd/a6/61/cda661b64426ad6872318e42b5408120.jpg', 
+                    stock: true,
+                    compare: 16,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: 'ផ្សេងៗ',
+            description: '<p></p>',
+        },
+{
+            id: 59,
+            name: 'គ្រាប់ថ្នាំវេទមន្ត',
+            images: ['https://i.pinimg.com/736x/5e/8f/7b/5e8f7bc454b6744dd14cf236f68e16ea.jpg', 'https://i.pinimg.com/736x/e5/dc/6f/e5dc6ff07db14e136e3abb865f1d2262.jpg', 'https://i.pinimg.com/736x/2a/fd/46/2afd461bab80b0faff68fc747237d9a2.jpg'],
+            colors: [{
+                    name: '1កញ្ចប់', 
+                     price: 1,
+                    image: 'https://i.pinimg.com/736x/e5/dc/6f/e5dc6ff07db14e136e3abb865f1d2262.jpg', 
+                    stock: true,
+                    compare: 2,
+                    discount: 0.5,
+                },
+{
+                    name: '1ប្រអប់១០កញ្ចប់', 
+                     price: 7.5,
+                    image: 'https://i.pinimg.com/736x/2a/fd/46/2afd461bab80b0faff68fc747237d9a2.jpg', 
+                    stock: true,
+                    compare: 15,
+                    discount: 0.5,
+                }],
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p>គ្រាប់ថ្នាំវេទមន្តជួយធ្វើអោយកញ្ចក់ឡាន និងកញ្ចក់ផ្សេងៗ លាងសំអាតបានល្អ ដូចថ្មីចឹងណាបងៗ ថ្នាំ1គ្រាប់ប្រើទឹក4L</p>',
+        },
+{
+            id: 60,
+            name: 'Eyeliner 2in1 ',
+            images: ['https://i.pinimg.com/736x/04/8a/3a/048a3abacbd09ab80d33092fc1522b14.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: '1$ដល់3$',
+            description: '<p>Eyeliner 2in1 1ប្រអប់3$ ណាបង ធុននិងទឹក ញើស បានយ៉ាងល្អជាប់បានយូរ ពណ័ដិតល្អ ងាយស្រួលដាក់តាមខ្លួន ✨តម្លៃសមរម្យ ពិសេសខ្លះសំរាប់បងៗដែរមិនចេះគូសកន្ទុយភ្នែក💞</p>',
+             price: 3
+        },
+{
+            id: 61,
+            name: 'ខោរឹបរាង lets Slim',
+            images: ['https://i.pinimg.com/474x/0c/09/0a/0c090a3bad5a04687d66ab3b50445aaf.jpg', 'https://i.pinimg.com/474x/ee/92/f9/ee92f984657706c289373ee347c0f428.jpg', 'https://i.pinimg.com/474x/d3/32/ea/d332ea6c04fafb09f2f3285bf95cc6fe.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'ខ្លួន',
+            description: '<p>មកដល់ហើយចា៎_ខោរឹបរាង let&#039;s Slim<br>👉Wow wow ទាញយ៉ាងណាក៏មិនរហែក👏👏<br>👉Let&#039;s Slim ជាប្រភេទខោសម្រកធ្វើឲ្តជើងតូចស្រលូន<br>👉🏻ជាខោស្លៀករឹបរាង ដើម្បីបង្កើនរាងដ៏ស្រស់ស្អាត ទាក់ទាញ ជួយលើកត្រគាកអោយមើលទៅ ងរស្អាត ជួយបណ្តឹងក្បាលពោះអោយរាបស្មើរ មិនអោយយារធ្លាក់ ជាពិសេសធ្វើអោយចង្កេះ និងជើងរួមតូចស្រលូន គួរអោយស្រលាញ់ថែមទៀតផង ☺️☺️☺️<br>👉🏻 អាចស្លៀកជារៀងរាល់ថ្ងៃ ដើម្បីទទួលបាននូវ រូបរាងស្រស់ស្អាតទាំងអស់គ្នាណា</p>',
+             price: 3
+        },
+{
+            id: 62,
+            name: 'Lameila cushion ',
+            images: ['https://i.pinimg.com/474x/0b/66/0e/0b660e1fbcea22206705769d4bd830a8.jpg', 'https://i.pinimg.com/474x/dc/af/f2/dcaff2ef1b6f230ee68caa6632b7fa46.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>❤️Lameila cushion ❤️អាចផាត់តែឯងរឺ ធ្វើជាម្សៅទ្រនាប់ ពិសេស✨<br>💕គឺជាអ្នកឯកទេសផាត់មុខដ៏អស្ចារ្យបំផុត👍👍<br>👍ធន់នឹងញើសមែនទែន<br>🌟ជួយការពារកំដៅថ្ងៃ SPF50++<br>🌟ជួយបិតបាំងស្នាមនៅផ្ទៃមុខ💯<br>🌟លាបចូលសាច់មុខឲ្យមើលទៅម៉ដ្ឋ (មិនកក)<br>🌟មិនប្រតាកពេលត្រូវទឹក (waterproof)<br>🌟មិនធ្វើឲ្យស្បែកមុខស្ងួត ហើយថែមទាំងម៉ត់រលោងស្អាត💕<br></p>',
+             price: 3
+        },
+{
+            id: 63,
+            name: 'ច្រាស់ដុះមុខ​ ',
+            images: ['https://i.pinimg.com/474x/14/a4/94/14a494c5c6789ec3e05555eef7f1b37d.jpg', 'https://i.pinimg.com/736x/a0/27/75/a0277575c0b5b9c6a742052ad5649e1b.jpg'],
+            compare: 6,
+            discount: 0.5,
+            stock: true,
+            category: 'មុខ',
+            description: '<p>👐ច្រាស់ដុះមុខ​ Silicone Brush​  Cute កប់សេរី😍<br>❄️ជាច្រាស់ដុះមុខដែលជួយសំអាតជាតិកង្វក់បានល្អ💯<br>❄️ច្រាស់ខាងមុខមានសសៃទន់ល្មេីយ​ ជួយសំអាតធូលីដីដែលកាន់ជាប់លេីស្បែកមុខ<br>❄️ជួយសំអាតចូលដល់រុញរោមអោយស្អាតល្អជាងដៃរបស់យេីង<br>❄️ហេីយច្រាស់ខាងក្រោយជួយសំអាតមុនក្បាលខ្មៅ​នឹងមុនសាច់បានយ៉ាងល្អ<br>💋វិធីប្រេី<br>👉ដុះមុខជាមួយសាប៊ូលាងមុខ​ រឺ​ ហ្វូមលាងមុខ​ 👉 ញេីរអោយបែកពពុះហេីយយកច្រាសSilicone Brush មកដុះ​មុខ​ រឺ​ ម៉ាស្សា ដុះខាត់លេីមុខ​ 5-10នាទី​ រឺ​ ដាក់ហ្វូមលាងមុខលេីច្រាស់រួចដុះម៉ាស្សាដូចគ្នា​ ហេីយលាងមុខចេញជាកាស្រេច😊</p>',
+             price: 3
+        },
+{
+            id: 64,
+            name: 'ម៉ាសុីនកោលរោម',
+            images: ['https://i.pinimg.com/474x/a8/2a/7c/a82a7cdee8224326f846ff33d00f589f.jpg', 'https://i.pinimg.com/474x/42/5f/71/425f71c1e9694ed5129232273aefeecb.jpg'],
+            compare: 10,
+            discount: 0.5,
+            stock: true,
+            category: 'ផ្សេងៗ',
+            description: '<p></p>',
+             price: 5
         }
-    });
-    function formatConsoleOutput(text) {
-        // Remove extra blank lines
-        return text.replace(/^\s*[\r\n]/gm, '').trim();
-    }
-
-    // Event listener for Remove Blank Spacing button
-    removeBlankSpacingButton.addEventListener('click', () => {
-        // Get the current content of the console output
-        let currentOutput = consoleOutput.textContent;
-        // Format the output to remove blank spaces
-        let formattedOutput = formatConsoleOutput(currentOutput);
-        // Update the console output
-        consoleOutput.textContent = formattedOutput;
-    });
-    function copyToClipboard(text) {
-        const tempTextArea = document.createElement('textarea');
-        tempTextArea.value = text;
-        document.body.appendChild(tempTextArea);
-        tempTextArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempTextArea);
-        showToast('Console text copied to clipboard!', 'success');
-    }
-
-    // Event listener for Copy Console Text button
-    copyConsoleTextButton.addEventListener('click', () => {
-        // Get the current content of the console output
-        let currentOutput = consoleOutput.textContent;
-        // Format the output to remove blank spaces
-        let formattedOutput = formatConsoleOutput(currentOutput);
-        // Copy the formatted output to clipboard
-        copyToClipboard(formattedOutput);
-    });
-    
-
-function createColorField(index, color = {}) {
-    const colorDiv = document.createElement('div');
-    colorDiv.classList.add('color-field'); 
-    colorDiv.innerHTML = `
-        <h4>Color ${index + 1}</h4>
-        
-        <label for="color-stock-${index}">In Stock:</label>
-        <input type="checkbox" id="color-stock-${index}" name="colors[${index}][stock]" ${color.stock ? 'checked' : ''}>
-        
-        <label for="color-preorder-${index}">Pre-Order (optional):</label>
-        <input type="checkbox" id="color-preorder-${index}" name="colors[${index}][preOrder]" ${color.preOrder ? 'checked' : ''}>
-
-        <div class="color-field-row">
-            <label for="color-name-${index}">Color Name:</label>
-            <input type="text" id="color-name-${index}" name="colors[${index}][name]" value="${color.name || ''}" required>
-
-            <label for="color-price-${index}">Price:</label>
-<input type="text" id="color-price-${index}" name="colors[${index}][price]" value="${color.price || ''}" required>
-
-        </div>
-
-        <label for="color-image-${index}">Image URL:</label>
-            <input type="text" id="color-image-${index}" name="colors[${index}][image]" value="${color.image || ''}" required>
-            
-            <div id="image-preview-${index}" class="image-preview"></div>
-            
-
-            
-        <div class="color-field-row">
-            <label for="color-compare-${index}">Compare Price (optional):</label>
-<input type="text" id="color-compare-${index}" name="colors[${index}][compare]" value="${color.compare || ''}">
-
-<label for="color-discount-${index}">Discount (0 to 1, optional):</label>
-<input type="text" id="color-discount-${index}" name="colors[${index}][discount]" value="${color.discount || ''}">
-
-        </div>
-
-        <button type="button" class="remove-color" data-index="${index}">Remove Color</button>
-    `;
-    
-    colorList.appendChild(colorDiv);
-    
-    const imageInput = colorDiv.querySelector(`#color-image-${index}`);
-    const imagePreview = colorDiv.querySelector(`#image-preview-${index}`);
-
-    function updateImagePreview() {
-        const url = imageInput.value.trim();
-        imagePreview.innerHTML = ''; 
-
-        if (url) {
-            const img = document.createElement('img');
-            img.src = url;
-            imagePreview.appendChild(img);
-        }
-    }
-
-    // Set up event listener for the image input field
-    imageInput.addEventListener('input', updateImagePreview);
-
-    // Initial update if there's already a value
-    updateImagePreview();
-
-
-    colorDiv.querySelector('.remove-color').addEventListener('click', (e) => {
-        const indexToRemove = parseInt(e.target.getAttribute('data-index'));
-        // Find and remove the parent color field container
-        const colorFieldToRemove = e.target.closest('.color-field');
-        if (colorFieldToRemove) {
-            colorFieldToRemove.remove();
-            colorCount--; // Decrease colorCount if necessary
-        }
-    });
-}
-
-            addColorButton.addEventListener('click', () => {
-                createColorField(colorCount);
-                colorCount++;
-            });
-
-            hasColorsCheckbox.addEventListener('change', function() {
-                colorsContainer.style.display = this.checked ? 'block' : 'none';
-                document.getElementById('product-price').classList.toggle('hide', this.checked);
-                document.getElementById('product-compare').classList.toggle('hide', this.checked);
-                document.getElementById('product-discount').classList.toggle('hide', this.checked);
-            });
-
-           function formatDescription(description) {
-    // Escape HTML special characters to prevent XSS
-    const escapeHtml = (text) => {
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return text.replace(/[&<>"']/g, (m) => map[m]);
-    };
-
-    // Escape the description and replace newlines with <br>
-    return `<p>${escapeHtml(description).replace(/\n/g, '<br>')}</p>`;
-}
-
-function displayProducts() {
-    const searchQuery = document.getElementById('search-bar').value.toLowerCase();
-    const selectedCategory = document.getElementById('category-filter').value;
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const productList = document.getElementById('product-list');
-    productList.innerHTML = '';
-
-    products
-    .filter(product => {
-                    const matchesSearch = product.name.toLowerCase().includes(searchQuery) || product.description.toLowerCase().includes(searchQuery);
-                    // const matchesCategory = !selectedCategory || product.category === selectedCategory;
-                    const matchesCategory = selectedCategory === 'all' || !selectedCategory || product.category === selectedCategory;
-                    return matchesSearch && matchesCategory;
-                })
-    .forEach(product => {
-        const colorDetailsHtml = product.colors.length > 0 ? `
-            <div class="color-details">
-                ${product.colors.map(color => `
-                    <div style="padding: 5px;">
-                        <p><strong>Color:</strong> ${color.name}</p>
-                        <p><strong>Price:</strong> $${color.price}</p>
-                        <p><strong>Stock:</strong> ${color.stock ? 'In Stock' : 'Out of Stock'}</p>
-                        ${color.compare !== undefined ? `<p><strong>Compare Price:</strong> $${color.compare}</p>` : ''}
-                        ${color.discount !== undefined ? `<p><strong>Discount:</strong> ${color.discount * 100}%</p>` : ''}
-                        <img src="${color.image}" alt="${color.name}" style="width: 100px; height: 100px;">
-                    </div>
-                `).join('')}
-            </div>
-        ` : '';
-
-        const productRow = document.createElement('tr');
-        productRow.classList.add('product-row');
-        productRow.dataset.id = product.id;
-
-        productRow.innerHTML = `
-                  <td>${product.id}</td>
-            <td>${product.images.length > 0 ? `<img src="${product.images[0]}" alt="${product.name}" class="product-image">` : 'No Image'}</td>
-            <td>${product.name}</td>
-            <td>${formatDescription(product.description)}</td>
-            <td>${product.category}</td>
-            <td>${product.stock ? 'Available' : 'Out of Stock'}</td>
-            <td>${product.price !== undefined ? `$${product.price}` : 'No Price'}</td>
-             <td>${product.compare !== undefined ? `$${product.compare}` : ''}</td>
-            <td>${product.discount !== undefined ? `${product.discount * 100}%` : ''}</td>
-            <td>${product.preOrder !== undefined ? (product.preOrder ? 'Yes' : 'No') : ''}</td>
-            <td>${product.tiktokVideoId ? stripHTMLTags(product.tiktokVideoId) : ''}</td>
-            <td>${product.reloadInterval !== undefined ? `${product.reloadInterval} ms` : ''}</td>
-            <td>${product.tag || ''}</td>
-            <td>${product.customText || ''}</td>
-            <td>${product.colors.length > 0 ? `${product.colors.length} ${product.colors.length > 1 ? 'Colors' : 'Color'}` : 'No Colors'}</td>
-            <td>
-                <button data-id="${product.id}" class="edit-product">Edit</button>
-                <button data-id="${product.id}" class="delete-product">Delete</button>
-            </td> <!-- Actions Column -->
-       
-        `;
-        productList.appendChild(productRow);
-    });
-    document.querySelectorAll('.product-row').forEach(row => {
-        row.addEventListener('click', (e) => {
-            const productId = parseInt(e.currentTarget.dataset.id);
-            showProductDetails(productId);
-        });
-    });
-
-    document.querySelectorAll('.edit-product').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            editProduct(parseInt(e.target.dataset.id));
-        });
-    });
-
-    document.querySelectorAll('.delete-product').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const productId = parseInt(e.target.dataset.id);
-            deleteProduct(productId);
-        });
-    });
-}
-
-function populateCategoryFilter() {
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const categoryFilter = document.getElementById('category-filter');
-            const categories = [...new Set(products.map(product => product.category))];
-
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                categoryFilter.appendChild(option);
-            });
-        }
-
-        document.getElementById('search-bar').addEventListener('input', displayProducts);
-        document.getElementById('category-filter').addEventListener('change', displayProducts);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize localStorage with sample data if it's empty
-            if (!localStorage.getItem('products')) {
-                localStorage.setItem('products', JSON.stringify(sampleProducts));
-            }
-            populateCategoryFilter();
-            displayProducts();
-        });
-function showProductDetails(productId) {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const product = products.find(p => p.id === productId);
-    
-    if (product) {
-        const productDetails = document.getElementById('product-details');
-        productDetails.innerHTML = `
-            ${product.colors.length > 0 ? `
-            <div class="product-colors">
-                ${product.colors.map(color => `
-                     <div style="padding: 5px; margin-top: 5px;">
-                        <p><strong>Color:</strong> ${color.name}</p>
-                        <p><strong>Price:</strong> $${color.price}</p>
-                        <p><strong>Stock:</strong> ${color.stock ? 'In Stock' : 'Out of Stock'}</p>
-                        ${color.compare !== undefined ? `<p><strong>Compare Price:</strong> $${color.compare}</p>` : ''}
-                        ${color.discount !== undefined ? `<p><strong>Discount:</strong> ${color.discount * 100}%</p>` : ''}
-                        <img src="${color.image}" alt="${color.name}" style="width: 200px; height: 200px;">
-                    </div>
-                `).join('')}
-            </div>` : ''}
-        `;
-        document.getElementById('product-modal').style.display = 'flex';
-    }
-}
-
-document.getElementById('close-modal').addEventListener('click', () => {
-    document.getElementById('product-modal').style.display = 'none';
-});
-    document.getElementById('refresh-products').addEventListener('click', () => {
-        displayProducts();
-        showToast('Products refreshed successfully!', 'success');
-    });
-
-    displayProducts();
-
-function stripHTMLTags(input) {
-    var doc = new DOMParser().parseFromString(input, 'text/html');
-    return doc.body.textContent || "";
-}
-            function editProduct(productId) {
-                const products = JSON.parse(localStorage.getItem('products') || '[]');
-                const product = products.find(p => p.id === productId);
-
-                if (product) {
-                    document.getElementById('product-name').value = product.name;
-                    // document.getElementById('product-description').value = product.description; 
-                            document.getElementById('product-description').value = stripHTMLTags(product.description);
-
-                    document.getElementById('product-category').value = product.category;
-                    document.getElementById('product-stock').checked = product.stock;
-                    
-                    const hasColors = product.colors.length > 0;
-                    document.getElementById('has-colors').checked = hasColors;
-                    document.getElementById('product-price').value = hasColors ? '' : product.price || '';
-                    document.getElementById('product-compare').value = hasColors ? '' : product.compare || '';
-                    document.getElementById('product-discount').value = hasColors ? '' : product.discount || '';
-                    document.getElementById('product-preorder').checked = hasColors ? false : product.preOrder || false;
-                    document.getElementById('product-tag').value = product.tag || '';
-                    document.getElementById('product-custom-text').value = product.customText || '';
-                    document.getElementById('product-images').value = product.images.join(', ');
-                    
-                    document.getElementById('tiktokVideoId').value = product.tiktokVideoId || '';
-                    document.getElementById('reloadInterval').value = product.reloadInterval || '';
-
-                    colorList.innerHTML = '';
-                    product.colors.forEach((color, index) => {
-                        createColorField(index, color);
-                    });
-
-                    colorsContainer.style.display = product.colors.length ? 'block' : 'none';
-                    editingProductId = productId;
-                    
-                    floatingFormOverlay.style.display = 'flex';
-                }
-            }
-            
-productForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    
-    floatingFormOverlay.style.display = 'none';
-});
-            function deleteProduct(productId) {
-                let products = JSON.parse(localStorage.getItem('products') || '[]');
-                products = products.filter(p => p.id !== productId);
-                localStorage.setItem('products', JSON.stringify(products));
-                displayProducts();
-            }
-
-    productForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById('product-name').value;
-    const description = formatDescription(document.getElementById('product-description').value);
-    const category = document.getElementById('product-category').value;
-    const stock = document.getElementById('product-stock').checked;
-const price = document.getElementById('product-price').value.trim() ? parseFloat(document.getElementById('product-price').value) : undefined;
-        const compare = document.getElementById('product-compare').value.trim() ? parseFloat(document.getElementById('product-compare').value) : undefined;
-        const discount = document.getElementById('product-discount').value.trim() ? parseFloat(document.getElementById('product-discount').value) : undefined;
-    const preOrder = document.getElementById('product-preorder').checked ? true : undefined; 
-    const tag = document.getElementById('product-tag').value || undefined; 
-    const customText = document.getElementById('product-custom-text').value || undefined; 
-    const images = document.getElementById('product-images').value.split(',').map(url => url.trim());
-     const tiktokVideoId = document.getElementById('tiktokVideoId').value.trim() || undefined;
-    const reloadInterval = document.getElementById('reloadInterval').value.trim() ? parseInt(document.getElementById('reloadInterval').value) : undefined;
-    const colors = Array.from(document.querySelectorAll('#color-list > div')).map((div, index) => ({
-        name: document.getElementById(`color-name-${index}`).value,
-        price: parseFloat(document.getElementById(`color-price-${index}`).value) || undefined, 
-        image: document.getElementById(`color-image-${index}`).value,
-        stock: document.getElementById(`color-stock-${index}`).checked,
-        compare: parseFloat(document.getElementById(`color-compare-${index}`).value) || undefined, 
-        discount: parseFloat(document.getElementById(`color-discount-${index}`).value) || undefined, 
-        preOrder: document.getElementById(`color-preorder-${index}`).checked ? true : undefined 
-    }));
-
-    const product = {
-        id: editingProductId || getLastId() + 1,
-        name,
-        description,
-        category,
-        stock,
-         price: colors.length ? undefined : price,
-            compare: colors.length ? undefined : compare,
-            discount: colors.length ? undefined : discount,
-            preOrder: colors.length ? undefined : preOrder,
-        tag,
-        customText,
-        images,
-        colors,
-        tiktokVideoId,
-        reloadInterval
-    };
-
-    let products = JSON.parse(localStorage.getItem('products') || '[]');
-    if (editingProductId) {
-        products = products.map(p => p.id === editingProductId ? product : p);
-    } else {
-        products.push(product);
-    }
-    localStorage.setItem('products', JSON.stringify(products));
-    setLastId(product.id);
-    displayProducts();
-    productForm.reset();
-    colorList.innerHTML = '';
-    colorsContainer.style.display = 'none';
-    editingProductId = null;
-
-    alert('Product saved successfully!');
-});
-
-
-    consoleButton.addEventListener('click', () => {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const formattedProducts = products.map(product => {
-        const formattedColors = product.colors && product.colors.length ? 
-            product.colors.map(color => 
-                `{
-                    name: '${color.name || ''}', 
-                     ${color.price !== undefined ? `price: ${color.price},` : ''}
-                    image: '${color.image || ''}', 
-                    stock: ${color.stock || 'false'},
-                    ${color.compare !== undefined ? `compare: ${color.compare},` : ''}
-                    ${color.discount !== undefined ? `discount: ${color.discount},` : ''}
-                    ${color.preOrder !== undefined ? `preOrder: ${color.preOrder},` : ''}
-                }`
-            ).join(',\n') : '';
-        
-        return `{
-            id: ${product.id || 'null'},
-            name: '${product.name || ''}',
-            images: [${product.images ? product.images.map(url => `'${url}'`).join(', ') : '[]'}],
-            ${formattedColors ? `colors: [${formattedColors}],` : ''}
-            ${product.tag ? `tag: '${product.tag}',` : ''}
-            ${product.customText ? `customText: '${product.customText}',` : ''}
-            ${product.preOrder !== undefined ? `preOrder: ${product.preOrder},` : ''}
-            ${product.compare !== undefined ? `compare: ${product.compare},` : ''}
-            ${product.discount !== undefined ? `discount: ${product.discount},` : ''}
-            stock: ${product.stock || 'false'},
-            category: '${product.category || ''}',
-            description: '${product.description || ''}',
-             ${product.price !== undefined ? `price: ${product.price}` : ''}
-             
-             ${product.tiktokVideoId ? `tiktokVideoId: '${product.tiktokVideoId}',` : ''}
-            ${product.reloadInterval !== undefined ? `reloadInterval: ${product.reloadInterval},` : ''}
-        }`;
-    }).join(',\n');
-
-    consoleOutput.textContent = `const products = [\n${formattedProducts}\n];`;
-});
-            displayProducts();
-        });
-        
-document.getElementById('openFloatFormButton').addEventListener('click', () => {
-    document.getElementById('floatingTextFormOverlay').style.display = 'flex';
-});
-
-document.getElementById('cancelJsonButton').addEventListener('click', () => {
-    document.getElementById('floatingTextFormOverlay').style.display = 'none';
-});
-
-document.getElementById('submitJsonButton').addEventListener('click', () => {
-    const jsonInput = document.getElementById('jsonInput').value;
-    try {
-        const newProduct = JSON.parse(jsonInput); // Parse JSON input
-        let products = JSON.parse(localStorage.getItem('products') || '[]');
-        
-        if (!Array.isArray(newProduct)) {
-            newProduct.id = getLastId() + 1; 
-            products.push(newProduct);
-        } else {
-            newProduct.forEach(product => {
-                product.id = getLastId() + 1; 
-                products.push(product);
-            });
-        }
-
-        localStorage.setItem('products', JSON.stringify(products)); 
-        document.getElementById('floatingTextFormOverlay').style.display = 'none';
-        showToast('Product(s) added successfully!', 'success');
-        displayProducts(); 
-
-    } catch (error) {
-        showToast('Invalid JSON input!', 'error');
-    }
-});
-
-function getLastId() {
-    let products = JSON.parse(localStorage.getItem('products') || '[]');
-    if (products.length === 0) return 0;
-    r
+];
