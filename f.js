@@ -945,13 +945,14 @@ const products = [
             id: 52,
             name: 'ម៉ាសមាស',
             images: ['https://i.pinimg.com/474x/d3/87/c6/d387c6e09b0ce214d6a0dd73ff381aac.jpg'],
-            compare: 12,
+            compare: 6,
             discount: 0.5,
             stock: true,
             category: '1$ដល់3$',
             description: '<p>&lt;បំប៉នស្បែកមុខ &lt;ព្យាបាល &lt;បឺតមុនបញ្ចេញមុនខ្ទុះ មុនកប់ &lt;កាត់បន្ថយរោល ក្រហម &lt;  រលាក លេីស្បែកមុខ ✨ ស្បែកមុខ ស និងភ្លឺថ្លាទន់រលោង🍯🥰 </p>',
-             price: 6
+             price: 3
         },
+
 {
             id: 53,
             name: 'Pink Gold Mask',
