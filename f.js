@@ -903,11 +903,11 @@ const products = [
             name: 'ប្រេងក្រអូប',
             images: ['https://i.pinimg.com/474x/23/e8/25/23e82533ef1843ecfa65f8c059e1c475.jpg'],
             compare: 12,
-            discount: 0.5,
+            // discount: 0.5,
             stock: true,
             category: 'ខ្លួន',
             description: '<p>ក្រអូបជាប់បានយូរ24ម៉ោង</p>',
-             price: 6
+             price: 3
         },
 
 {
@@ -926,11 +926,11 @@ const products = [
             name: 'ស្នោរពពុះ',
             images: ['https://i.pinimg.com/474x/44/f9/00/44f90024da3b569140b73e7095a34797.jpg'],
             compare: 6,
-            discount: 0.5,
+            // discount: 0.5,
             stock: true,
             category: '1$ដល់3$',
             description: '<p>ចំំណុះ30g</p>',
-             price: 3
+             price: 2
         },
 {
             id: 51,
