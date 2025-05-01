@@ -1,10 +1,56 @@
         let footerEnabled = false; // Set to false to hide the footer countdown
 
         let announcements = [
-            { text: "✅ Free Delivery For Order Over 10$ 🛍️", class: "restock", active: true },
-            { text: "🛠️ Scheduled Maintenance: Our site will be temporarily down.", class: "maintenance", active: false },
-            { text: "🚨 Store Closure Alert: We’ll be closed this weekend!", class: "store-close", active: false }
-        ];
+    { text: "✅ Free Delivery For Order Over $10 🛍️", class: "restock", active: true },
+    { text: "🛠️ Scheduled Maintenance: Our site will be temporarily down.", class: "maintenance", active: false },
+    { text: "🚨 Store Closure Alert: We’ll be closed this weekend!", class: "store-close", active: true }
+];
+
+function updateAnnouncementStyle() {
+    let activeAnnouncements = announcements.filter(a => a.active);
+    if (activeAnnouncements.length === 0) return;
+
+    let announcementDiv = document.getElementById("announcement");
+    document.getElementById("announcementText").innerText = activeAnnouncements[0].text;
+
+    if (activeAnnouncements[0].class === "restock") {
+        announcementDiv.style.cssText = `
+            background-color: #ff9900; /* Orange */
+            color: #fff;
+            padding: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            text-transform: uppercase;
+            box-shadow: 0px 0px 10px rgba(255, 165, 0, 0.6);
+        `;
+    } else if (activeAnnouncements[0].class === "maintenance") {
+        announcementDiv.style.cssText = `
+            background-color: #0066ff; /* Blue */
+            color: #fff;
+            padding: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            font-style: italic;
+            box-shadow: 0px 0px 10px rgba(0, 102, 255, 0.6);
+        `;
+    } else if (activeAnnouncements[0].class === "store-close") {
+        announcementDiv.style.cssText = `
+            background-color: #cc0000; /* Red */
+            color: #fff;
+            padding: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            text-decoration: underline;
+            box-shadow: 0px 0px 10px rgba(204, 0, 0, 0.6);
+        `;
+    }
+}
+
+// Run the function when the page loads
+updateAnnouncementStyle();
 
         let index = 0;
         let restockDeadline = new Date("2025-05-10T12:00:00");
