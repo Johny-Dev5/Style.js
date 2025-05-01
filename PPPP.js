@@ -3,7 +3,7 @@
         let announcements = [
     { text: "✅ Free Delivery For Order Over $10 🛍️", class: "restock", active: true },
     { text: "🛠️ Scheduled Maintenance: Our site will be temporarily down.", class: "maintenance", active: false },
-    { text: "🚨 Store Closure Alert: We’ll be closed this weekend!", class: "store-close", active: true }
+    { text: "🚨 Store Closure Alert: We’ll be closed this weekend!", class: "store-close", active: false }
 ];
 
 function updateAnnouncementStyle() {
