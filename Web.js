@@ -3,8 +3,21 @@ const endpointUrl = 'https://script.google.com/macros/s/AKfycbw6Fb1_54XrPWaqMN-W
 fetch(endpointUrl)
   .then(response => response.json())
   .then(data => {
+    if (!Array.isArray(data) || data.length === 0) {
+      throw new Error('Invalid data format');
+    }
+
+    const [headers, ...rows] = data;
+    const products = rows.map(row => {
+      const product = {};
+      headers.forEach((header, index) => {
+        product[header] = row[index];
+      });
+      return product;
+    });
+
     const productsContainer = document.getElementById('products-container');
-    data.forEach(product => {
+    products.forEach(product => {
       const productElement = document.createElement('div');
       productElement.classList.add('product');
       productElement.innerHTML = `
